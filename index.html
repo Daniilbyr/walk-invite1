@@ -437,6 +437,28 @@
       100% { opacity: 0; transform: translate(-50%,-80px) scale(1.2); }
     }
 
+    /* ── Falling letters (name easter egg) ── */
+    .falling-letter {
+      position: fixed; z-index: 600; pointer-events: none;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.05rem;
+      animation: letterFall var(--fd, 1.1s) ease-in forwards;
+    }
+    @keyframes letterFall {
+      0% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translate(var(--dx, 0), 90px) rotate(var(--rot, 360deg)) scale(0.4); }
+    }
+    .name-shake { animation: nameShake 0.5s ease; border-color: var(--accent-dark) !important; }
+    @keyframes nameShake {
+      0%, 100% { transform: translateX(0); }
+      15%, 45%, 75% { transform: translateX(-7px); }
+      30%, 60%, 90% { transform: translateX(7px); }
+    }
+    #name.name-glow { box-shadow: 0 0 0 3px rgba(255,107,157,0.35); }
+    .badge { cursor: pointer; transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
+    .badge:active { transform: scale(0.94); }
+    .preview-val#pv-name { cursor: pointer; transition: color 0.2s; }
+    .preview-val#pv-name:hover { color: var(--accent-dark); }
+
     /* ── Music ── */
     .music-player {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
@@ -504,13 +526,13 @@
 
   <div class="app">
     <div class="top-bar">
-      <span class="badge badge-stalker">🕵️ Сталкер</span>
+      <span class="badge badge-stalker" id="badge-stalker">🕵️ Сталкер</span>
       <div class="steps">
         <div class="step-dot active" data-step="1"></div>
         <div class="step-dot" data-step="2"></div>
         <div class="step-dot" data-step="3"></div>
       </div>
-      <span class="badge badge-vredina">😈 Вредина</span>
+      <span class="badge badge-vredina" id="badge-vredina">😈 Вредина</span>
     </div>
 
     <!-- Screen 1 -->
@@ -558,7 +580,7 @@
           <p class="form-section">👤 Кто едет</p>
           <div class="form-group">
             <label for="name">Имя / позывной</label>
-            <p class="field-hint">Официально «Вредина» или как в переписке — оба варианта засчитываются. Сталкер всё равно так и напишет 😊</p>
+            <p class="field-hint">Официально только «Вредина». Попробуй изменить — посмотрим 😏</p>
             <input type="text" id="name" value="Вредина">
           </div>
 
@@ -900,13 +922,119 @@
     };
     document.getElementById('sweater').addEventListener('change', (e) => {
       document.getElementById('sweater-hint').textContent = sweaterHints[e.target.value];
+      if (e.target.value === 'none') {
+        toast('❄️ Закаляешься? Кофту всё равно принесу');
+        spawnFallingLetters('❄️🧥', document.getElementById('sweater'));
+      }
       updatePreview();
     });
 
     let nameClicks = 0;
-    document.getElementById('name').addEventListener('click', () => {
+    const CANONICAL_NAME = 'Вредина';
+    const nameInput = document.getElementById('name');
+    const nameToasts = [
+      '😈 Это имя зарезервировано. Только Вредина.',
+      '🌸 Буквы не согласны — они сыпятся, а имя остаётся.',
+      '💪 Сильная и независимая, но Вредина — навсегда.',
+      '🧥 Кофта для тебя, имя для тебя. Не меняется.'
+    ];
+    let nameToastIdx = 0;
+
+    function spawnFallingLetters(text, anchor) {
+      const rect = anchor.getBoundingClientRect();
+      const chars = [...text];
+      if (!chars.length) chars.push('?');
+      const colors = ['#e8437a', '#6c5ce7', '#ffd166', '#ff6b9d', '#2d1b3d'];
+      chars.forEach((ch, i) => {
+        setTimeout(() => {
+          const el = document.createElement('span');
+          el.className = 'falling-letter';
+          el.textContent = ch === ' ' ? '·' : ch;
+          el.style.left = (rect.left + 12 + i * 12 + Math.random() * 8) + 'px';
+          el.style.top = (rect.top + rect.height * 0.35 + Math.random() * 8) + 'px';
+          el.style.color = colors[Math.floor(Math.random() * colors.length)];
+          el.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px');
+          el.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+          el.style.setProperty('--fd', (0.9 + Math.random() * 0.5) + 's');
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 1500);
+        }, i * 35);
+      });
+      for (let j = 0; j < 4; j++) {
+        setTimeout(() => {
+          const h = document.createElement('span');
+          h.className = 'falling-letter';
+          h.textContent = ['😈', '✨', '💕', '🌸'][j];
+          h.style.left = (rect.left + Math.random() * rect.width) + 'px';
+          h.style.top = rect.top + 'px';
+          h.style.fontSize = '0.9rem';
+          h.style.setProperty('--dx', (Math.random() * 50 - 25) + 'px');
+          h.style.setProperty('--rot', (Math.random() * 360) + 'deg');
+          document.body.appendChild(h);
+          setTimeout(() => h.remove(), 1500);
+        }, j * 60);
+      }
+    }
+
+    function restoreVredinaName(attempted) {
+      spawnFallingLetters(attempted || nameInput.value, nameInput);
+      nameInput.value = CANONICAL_NAME;
+      nameInput.classList.remove('name-shake');
+      nameInput.offsetHeight;
+      nameInput.classList.add('name-shake', 'name-glow');
+      toast(nameToasts[nameToastIdx % nameToasts.length]);
+      nameToastIdx++;
+      setTimeout(() => nameInput.classList.remove('name-glow'), 800);
+      updatePreview();
+    }
+
+    nameInput.addEventListener('input', () => {
+      if (nameInput.value === CANONICAL_NAME) { updatePreview(); return; }
+      restoreVredinaName(nameInput.value);
+    });
+    nameInput.addEventListener('paste', (e) => {
+      e.preventDefault();
+      restoreVredinaName('paste');
+      toast('📋 Вставить не выйдет — только Вредина');
+    });
+    nameInput.addEventListener('click', () => {
       nameClicks++;
-      if (nameClicks === 3) toast('😊 Лучшее прозвище. Спорить не буду.');
+      if (nameClicks === 3) toast('😊 Лучшее прозвище. Менять бесполезно.');
+      if (nameClicks === 7) toast('😈 Сдалась бы уже — имя не поддаётся');
+    });
+
+    /* ── Badge easter eggs ── */
+    document.getElementById('badge-vredina').addEventListener('click', () => {
+      toast('😈 Только она. Точка.');
+      launchMiniHearts();
+    });
+    document.getElementById('badge-stalker').addEventListener('click', () => {
+      toast('🕵️ Сталкер на связи. Наблюдаю...');
+    });
+
+    let pvNameClicks = 0;
+    document.getElementById('pv-name').addEventListener('click', () => {
+      pvNameClicks++;
+      if (pvNameClicks === 5) toast('📋 В билете всегда будет Вредина');
+    });
+
+    let dateToastShown = false;
+    document.getElementById('date').addEventListener('change', () => {
+      if (!dateToastShown && document.getElementById('date').value !== '2025-06-02') {
+        dateToastShown = true;
+        toast('📅 Перенос? Сталкер перестроит планы');
+      }
+      updatePreview();
+    });
+
+    let earlyTimeToast = false;
+    document.getElementById('time').addEventListener('change', () => {
+      const t = document.getElementById('time').value;
+      if (!earlyTimeToast && t && parseInt(t.split(':')[0], 10) < 12) {
+        earlyTimeToast = true;
+        toast('❄️ Сосулька встаёт поздно? Подожду...');
+      }
+      updatePreview();
     });
 
     function updatePreview() {
@@ -939,7 +1067,7 @@
       document.getElementById('pv-sweater').textContent = sweaterShort;
       document.getElementById('pv-summary').textContent = `${name} + Сталкер = крутой вечер 🌸`;
     }
-    ['name','date','time'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
+    ['time'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
     updatePreview();
 
     const formatLabels = { stalker: 'Сталкер придумает (абьюз)', home: 'У дома Вредины', custom: '' };
@@ -964,7 +1092,7 @@
       if (formatVal === 'custom') formatText = document.getElementById('format-custom').value || 'Свой вариант';
       let routeText = routeVal === 'stalker' ? 'Куда захочешь, Сталкер' : (document.getElementById('route-custom').value || 'Напишу сама');
       return {
-        name: document.getElementById('name').value || 'Вредина',
+        name: CANONICAL_NAME,
         date: document.getElementById('date').value,
         time: document.getElementById('time').value,
         format: formatText, formatKey: formatVal,
