@@ -758,6 +758,7 @@
     /* ── Screen 1 ── */
     const btnYes = document.getElementById('btn-yes');
     const btnNo = document.getElementById('btn-no');
+    const btnRow = document.getElementById('btn-row');
     const persuasion = document.getElementById('persuasion');
     const abuseMeter = document.getElementById('abuse-meter');
     const abuseFill = document.getElementById('abuse-fill');
@@ -785,7 +786,16 @@
       el.style.animation = '';
     }, 5000);
 
+    function resetNoButton() {
+      btnNo.style.display = 'none';
+      btnNo.classList.remove('escaping');
+      btnNo.style.left = '';
+      btnNo.style.top = '';
+      if (btnNo.parentElement !== btnRow) btnRow.appendChild(btnNo);
+    }
+
     function goToScreen2(abused) {
+      resetNoButton();
       if (abused) {
         document.getElementById('s2-title').textContent = '😈 Ладно, абьюзер...';
         document.getElementById('s2-subtitle').textContent = 'Раз ты трижды сказала «нет», вот особые условия:';
