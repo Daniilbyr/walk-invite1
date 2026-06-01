@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Секретная миссия для Вредины 🌸</title>
+  <title>WALK INVITE — Vredina Edition 🌸</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -42,6 +42,20 @@
       transition: opacity 0.6s, visibility 0.6s;
     }
     .splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+    .splash-title {
+      font-family: 'Press Start 2P', cursive; font-size: 0.72rem;
+      color: var(--gold); text-align: center; line-height: 1.8; letter-spacing: 1px;
+    }
+    .splash-sub { color: rgba(255,255,255,0.75); font-size: 0.85rem; font-weight: 700; margin-top: 4px; }
+    .btn-start {
+      margin-top: 20px; font-family: 'Press Start 2P', cursive; font-size: 0.62rem;
+      padding: 14px 22px; background: var(--gold); color: #2d1b3d;
+      border: 3px solid #fff; border-radius: 4px; cursor: pointer;
+      animation: startBlink 1.2s step-end infinite;
+      box-shadow: 0 4px 0 #c9a030, 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .btn-start:active { transform: translateY(3px); box-shadow: 0 1px 0 #c9a030; }
+    @keyframes startBlink { 50% { opacity: 0.65; } }
     .splash-emoji { font-size: 3rem; animation: bounce 1s ease infinite; }
     .splash-text { color: #fff; font-weight: 800; font-size: 1rem; text-align: center; padding: 0 24px; }
     .splash-bar { width: 120px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
@@ -113,8 +127,40 @@
 
     .top-bar {
       width: 100%; max-width: 420px;
+      margin-bottom: 10px;
+    }
+    .game-hud {
+      background: rgba(26,10,46,0.88);
+      border: 2px solid rgba(255,209,102,0.35);
+      border-radius: 12px; padding: 10px 12px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .hud-top {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    }
+    .hud-lvl {
+      font-family: 'Press Start 2P', cursive; font-size: 0.48rem;
+      color: var(--gold); white-space: nowrap;
+    }
+    .hud-xp-wrap {
+      flex: 1; height: 10px; background: rgba(255,255,255,0.12);
+      border-radius: 2px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15);
+    }
+    .hud-xp-fill {
+      height: 100%; width: 10%; background: linear-gradient(90deg, var(--accent), var(--purple));
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .hud-sc {
+      font-family: 'Press Start 2P', cursive; font-size: 0.45rem;
+      color: #fff; white-space: nowrap;
+    }
+    .hud-quest {
+      font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.85);
+      margin-bottom: 8px; line-height: 1.4;
+    }
+    .hud-chars {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 14px;
     }
     .badge {
       font-size: 0.72rem; font-weight: 800; padding: 6px 12px;
@@ -141,9 +187,74 @@
       background: var(--card-bg); border-radius: 28px;
       padding: 28px 22px; box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.6);
+      border: 3px solid rgba(108,92,231,0.25);
       overflow: hidden;
     }
+    .level-tag {
+      display: inline-block; margin: 0 auto 12px;
+      font-family: 'Press Start 2P', cursive; font-size: 0.42rem;
+      color: var(--purple); background: rgba(108,92,231,0.1);
+      padding: 8px 10px; border-radius: 4px; border: 1px dashed rgba(108,92,231,0.35);
+      text-align: center; width: 100%; line-height: 1.6;
+    }
+    .quest-log {
+      margin: 12px 0 16px; padding: 12px 14px;
+      background: rgba(26,10,46,0.06); border-radius: 12px;
+      border: 2px solid rgba(108,92,231,0.2);
+    }
+    .quest-log-title {
+      font-family: 'Press Start 2P', cursive; font-size: 0.42rem;
+      color: var(--purple); margin-bottom: 10px;
+    }
+    .quest-item {
+      font-size: 0.78rem; font-weight: 700; color: #5c3d6e;
+      padding: 5px 0; transition: color 0.3s;
+    }
+    .quest-item.done { color: #27ae60; text-decoration: line-through; opacity: 0.75; }
+
+    /* Level clear / Game complete */
+    .level-clear {
+      position: fixed; inset: 0; z-index: 8000;
+      background: rgba(26,10,46,0.75); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity 0.35s, visibility 0.35s;
+    }
+    .level-clear.show { opacity: 1; visibility: visible; }
+    .level-clear-box {
+      text-align: center; padding: 28px 24px;
+      background: linear-gradient(135deg, #1a0a2e, #4a1942);
+      border: 3px solid var(--gold); border-radius: 8px;
+      box-shadow: 0 0 40px rgba(255,209,102,0.3);
+      animation: lcPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes lcPop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .lc-title {
+      font-family: 'Press Start 2P', cursive; font-size: 0.75rem;
+      color: var(--gold); line-height: 1.8; margin-bottom: 12px;
+    }
+    .lc-sub { color: #fff; font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; }
+    .lc-xp { font-family: 'Press Start 2P', cursive; font-size: 0.45rem; color: var(--accent); }
+
+    .achievement {
+      position: fixed; top: 72px; left: 50%; transform: translateX(-50%) translateY(-120px);
+      z-index: 700; max-width: 340px; width: calc(100% - 24px);
+      display: flex; gap: 12px; align-items: center;
+      padding: 12px 14px; border-radius: 10px;
+      background: linear-gradient(135deg, #1a0a2e, #2d1b3d);
+      border: 2px solid var(--gold);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+    }
+    .achievement.show { transform: translateX(-50%) translateY(0); }
+    .achievement span#ach-icon { font-size: 1.6rem; }
+    .achievement strong {
+      font-family: 'Press Start 2P', cursive; font-size: 0.42rem;
+      color: var(--gold); display: block; margin-bottom: 4px;
+    }
+    .achievement span#ach-desc { font-size: 0.72rem; color: rgba(255,255,255,0.8); font-weight: 600; }
+
     .card::before {
       content: ''; position: absolute; inset: -1px; border-radius: 28px; padding: 2px;
       background: linear-gradient(135deg, var(--accent), var(--purple), var(--gold), var(--accent));
@@ -506,9 +617,24 @@
 <body>
 
   <div class="splash" id="splash">
-    <div class="splash-emoji">🌸</div>
-    <div class="splash-text" id="splash-text">Сталкер загружает чувства...</div>
-    <div class="splash-bar"><span></span></div>
+    <div class="splash-emoji">🎮</div>
+    <div class="splash-title">WALK<br>INVITE</div>
+    <div class="splash-sub">Vredina Edition · только для неё</div>
+    <div class="splash-text" id="splash-text">3 уровня · 1 прогулка · ∞ абьюза</div>
+    <button class="btn-start" id="btn-start" type="button">▶ START</button>
+  </div>
+
+  <div class="achievement" id="achievement">
+    <span id="ach-icon">🏆</span>
+    <div><strong id="ach-title">ACHIEVEMENT</strong><span id="ach-desc"></span></div>
+  </div>
+
+  <div class="level-clear" id="level-clear">
+    <div class="level-clear-box">
+      <div class="lc-title" id="lc-title">LEVEL CLEAR!</div>
+      <div class="lc-sub" id="lc-sub"></div>
+      <div class="lc-xp" id="lc-xp"></div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -525,19 +651,28 @@
   </div>
 
   <div class="app">
-    <div class="top-bar">
-      <span class="badge badge-stalker" id="badge-stalker">🕵️ Сталкер</span>
-      <div class="steps">
-        <div class="step-dot active" data-step="1"></div>
-        <div class="step-dot" data-step="2"></div>
-        <div class="step-dot" data-step="3"></div>
+    <div class="top-bar game-hud" id="game-hud">
+      <div class="hud-top">
+        <span class="hud-lvl" id="hud-level">LVL 1</span>
+        <div class="hud-xp-wrap"><div class="hud-xp-fill" id="hud-xp-fill"></div></div>
+        <span class="hud-sc">⭐ <span id="hud-score">0</span></span>
       </div>
-      <span class="badge badge-vredina" id="badge-vredina">😈 Вредина</span>
+      <div class="hud-quest" id="hud-quest">▸ Босс: победи «Нет» или нажми «Да»</div>
+      <div class="hud-chars">
+        <span class="badge badge-stalker" id="badge-stalker">🕵️ Сталкер</span>
+        <div class="steps">
+          <div class="step-dot active" data-step="1"></div>
+          <div class="step-dot" data-step="2"></div>
+          <div class="step-dot" data-step="3"></div>
+        </div>
+        <span class="badge badge-vredina" id="badge-vredina">😈 Вредина</span>
+      </div>
     </div>
 
     <!-- Screen 1 -->
     <div class="screen active" id="screen1">
       <div class="card">
+        <div class="level-tag" id="level-tag-1">УР. 1 · БОСС «СОМНЕНИЕ»</div>
         <span class="mission-tag">классифицировано · только для тебя</span>
         <h1 id="s1-title">🌸 Ты приглашена на секретную миссию</h1>
         <p class="subtitle" id="s1-subtitle">После ОГЭ по математике. Восстановление нервных клеток гарантировано.</p>
@@ -548,7 +683,7 @@
         </div>
         <p class="persuasion" id="persuasion"></p>
         <div class="abuse-meter" id="abuse-meter" style="display:none">
-          <div class="abuse-meter-label">Уровень абьюза Сталкера</div>
+          <div class="abuse-meter-label">HP босса «Сомнение» ↓</div>
           <div class="abuse-bar"><div class="abuse-fill" id="abuse-fill"></div></div>
         </div>
       </div>
@@ -557,6 +692,7 @@
     <!-- Screen 2 -->
     <div class="screen" id="screen2">
       <div class="card">
+        <div class="level-tag" id="level-tag-2">УР. 2 · КВЕСТ «АНКЕТА»</div>
         <h1 id="s2-title">📋 Почти готово!</h1>
         <p class="subtitle" id="s2-subtitle">Уточни пару деталей, Вредина:</p>
         <p class="flavor" id="s2-flavor">Ты же сильная и независимая — справишься с формой 💪</p>
@@ -574,6 +710,14 @@
           <div class="preview-row"><span class="preview-label">Маршрут</span><span class="preview-val" id="pv-route">Куда захочешь</span></div>
           <div class="preview-row"><span class="preview-label">Кофта</span><span class="preview-val" id="pv-sweater">Своя → Сталкер несёт</span></div>
           <div class="preview-row" id="pv-summary">= крутой вечер 🌸</div>
+        </div>
+
+        <div class="quest-log" id="quest-log">
+          <div class="quest-log-title">SIDE QUESTS</div>
+          <div class="quest-item" id="q-name">⬜ Имя = Вредина (не трогать!)</div>
+          <div class="quest-item" id="q-date">⬜ Выбрать дату прогулки</div>
+          <div class="quest-item" id="q-sweater">⬜ Решить судьбу кофты</div>
+          <div class="quest-item" id="q-send">⬜ Отправить билет Сталкеру</div>
         </div>
 
         <form id="survey-form">
@@ -644,7 +788,7 @@
               <option value="none">Не возьму, закаляюсь ❄️</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-submit">Отправить предложение 💌</button>
+          <button type="submit" class="btn btn-submit">🎮 Завершить квест 💌</button>
         </form>
       </div>
     </div>
@@ -652,6 +796,7 @@
     <!-- Screen 3 -->
     <div class="screen" id="screen3">
       <div class="card">
+        <div class="level-tag" id="level-tag-3">УР. 3 · ФИНАЛ «ШТАМП»</div>
         <div class="ticket" id="ticket">
           <div class="ticket-header">✦ Билет на прогулку ✦</div>
           <div class="ticket-id" id="ticket-id">№ VRD-2025-❤️</div>
@@ -667,7 +812,7 @@
           <div class="ticket-signature">Твой Сталкер</div>
           <div class="stamp-overlay" id="stamp">✅</div>
         </div>
-        <button class="btn btn-stamp" id="btn-stamp">Поставить штамп 🔥</button>
+        <button class="btn btn-stamp" id="btn-stamp">🎮 Поставить штамп · WIN 🔥</button>
         <p class="final-message" id="final-msg"></p>
         <div class="love-note" id="love-note"></div>
         <div class="saved-data" id="saved-data"></div>
@@ -688,15 +833,72 @@
   <audio id="audio" src="rape-me.mp3" loop preload="auto" playsinline></audio>
 
   <script>
-    /* ── Splash ── */
-    const splashTexts = [
-      'Сталкер загружает чувства...',
-      'Ты возьмёшь кофту... потом отдашь мне нести 🧥',
-      'Считаю проценты счастья...',
-      'Размораживаю сосульку...'
-    ];
-    document.getElementById('splash-text').textContent = splashTexts[Math.floor(Math.random() * splashTexts.length)];
-    setTimeout(() => document.getElementById('splash').classList.add('hide'), 1600);
+    /* ── Splash & START ── */
+    document.getElementById('btn-start').addEventListener('click', () => {
+      document.getElementById('splash').classList.add('hide');
+      showAchievement('🎮', 'GAME START', 'Миссия для Вредины началась');
+    });
+
+    /* ── Game system ── */
+    const game = { score: 0, level: 1, achievements: new Set() };
+    const LEVELS = {
+      1: { quest: '▸ Босс: победи «Нет» или нажми «Да»', tag: 'УР. 1 · БОСС «СОМНЕНИЕ»' },
+      2: { quest: '▸ Квест: заполни анкету и отправь билет', tag: 'УР. 2 · КВЕСТ «АНКЕТА»' },
+      3: { quest: '▸ Финал: поставь штамп — победа!', tag: 'УР. 3 · ФИНАЛ «ШТАМП»' }
+    };
+
+    function addScore(n) {
+      game.score += n;
+      document.getElementById('hud-score').textContent = game.score;
+    }
+
+    function setXP(pct) {
+      document.getElementById('hud-xp-fill').style.width = pct + '%';
+    }
+
+    function updateHUD() {
+      document.getElementById('hud-level').textContent = 'LVL ' + game.level;
+      document.getElementById('hud-quest').textContent = LEVELS[game.level].quest;
+      ['1','2','3'].forEach(n => {
+        const el = document.getElementById('level-tag-' + n);
+        if (el) el.textContent = LEVELS[n].tag;
+      });
+    }
+
+    function showAchievement(icon, title, desc) {
+      if (game.achievements.has(title)) return;
+      game.achievements.add(title);
+      document.getElementById('ach-icon').textContent = icon;
+      document.getElementById('ach-title').textContent = title;
+      document.getElementById('ach-desc').textContent = desc;
+      document.getElementById('achievement').classList.add('show');
+      addScore(50);
+      setTimeout(() => document.getElementById('achievement').classList.remove('show'), 3200);
+    }
+
+    function levelClear(title, sub, xp, cb) {
+      document.getElementById('lc-title').textContent = title;
+      document.getElementById('lc-sub').textContent = sub;
+      document.getElementById('lc-xp').textContent = '+' + xp + ' XP  ·  +' + xp + ' ⭐';
+      addScore(xp);
+      const el = document.getElementById('level-clear');
+      el.classList.add('show');
+      setTimeout(() => {
+        el.classList.remove('show');
+        cb();
+      }, 2200);
+    }
+
+    function completeQuest(id) {
+      const el = document.getElementById(id);
+      if (!el || el.classList.contains('done')) return;
+      el.classList.add('done');
+      el.textContent = '✅ ' + el.textContent.replace(/^⬜ /, '');
+      addScore(25);
+    }
+
+    setXP(10);
+    updateHUD();
 
     /* ── Toast ── */
     let toastTimer;
@@ -773,7 +975,14 @@
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      setStep(id === 'screen1' ? 1 : id === 'screen2' ? 2 : 3);
+      game.level = id === 'screen1' ? 1 : id === 'screen2' ? 2 : 3;
+      setStep(game.level);
+      setXP(game.level === 1 ? 15 : game.level === 2 ? 45 : 75);
+      updateHUD();
+      if (id === 'screen2') {
+        if (document.getElementById('name').value === 'Вредина') completeQuest('q-name');
+        if (document.getElementById('date').value) completeQuest('q-date');
+      }
       window.scrollTo(0, 0);
     }
 
@@ -818,19 +1027,23 @@
 
     function goToScreen2(abused) {
       resetNoButton();
-      if (abused) {
-        document.getElementById('s2-title').textContent = '😈 Ладно, абьюзер...';
-        document.getElementById('s2-subtitle').textContent = 'Раз ты трижды сказала «нет», вот особые условия:';
-        document.getElementById('s2-flavor').textContent = 'Особые условия = особая прогулка. Справедливо? 😏';
-        toast('😈 Абьюзер mode: activated');
-      } else {
-        document.getElementById('s2-title').textContent = '📋 Почти готово!';
-        document.getElementById('s2-subtitle').textContent = 'Уточни пару деталей, Вредина:';
-        document.getElementById('s2-flavor').textContent = 'Ты же сильная и независимая — справишься с формой 💪';
-        toast('🌸 Класс! Будет хороший вечер');
-        launchMiniHearts();
-      }
-      showScreen('screen2');
+      const sub = abused ? 'Три «Нет» — абьюзер победил!' : 'Сказала «Да» — лёгкая победа!';
+      const xp = abused ? 150 : 120;
+      levelClear('LEVEL 1 CLEAR!', sub, xp, () => {
+        if (abused) {
+          document.getElementById('s2-title').textContent = '😈 Ладно, абьюзер...';
+          document.getElementById('s2-subtitle').textContent = 'Раз ты трижды сказала «нет», вот особые условия:';
+          document.getElementById('s2-flavor').textContent = 'Особые условия = особая прогулка. Справедливо? 😏';
+          showAchievement('😈', 'ABUSER MODE', 'Три «Нет» — и всё равно на уровень 2');
+        } else {
+          document.getElementById('s2-title').textContent = '📋 Почти готово!';
+          document.getElementById('s2-subtitle').textContent = 'Уточни пару деталей, Вредина:';
+          document.getElementById('s2-flavor').textContent = 'Ты же сильная и независимая — справишься с формой 💪';
+          showAchievement('💖', 'EASY WIN', 'Согласилась с первого раза!');
+          launchMiniHearts();
+        }
+        showScreen('screen2');
+      });
     }
 
     btnYes.addEventListener('click', () => goToScreen2(false));
@@ -883,6 +1096,7 @@
       btnYes.style.transform = `scale(${yesScale})`;
       abuseMeter.style.display = 'block';
       abuseFill.style.width = Math.min(100, noClicks * 33) + '%';
+      addScore(30);
 
       if (noClicks <= 3) {
         persuasion.textContent = persuasionTexts[noClicks - 1];
@@ -922,6 +1136,7 @@
     };
     document.getElementById('sweater').addEventListener('change', (e) => {
       document.getElementById('sweater-hint').textContent = sweaterHints[e.target.value];
+      completeQuest('q-sweater');
       if (e.target.value === 'none') {
         toast('❄️ Закаляешься? Кофту всё равно принесу');
         spawnFallingLetters('❄️🧥', document.getElementById('sweater'));
@@ -984,6 +1199,8 @@
       nameInput.classList.add('name-shake', 'name-glow');
       toast(nameToasts[nameToastIdx % nameToasts.length]);
       nameToastIdx++;
+      showAchievement('😈', 'NAME LOCKED', 'Вредина — единственное имя в игре');
+      completeQuest('q-name');
       setTimeout(() => nameInput.classList.remove('name-glow'), 800);
       updatePreview();
     }
@@ -1020,6 +1237,7 @@
 
     let dateToastShown = false;
     document.getElementById('date').addEventListener('change', () => {
+      completeQuest('q-date');
       if (!dateToastShown && document.getElementById('date').value !== '2025-06-02') {
         dateToastShown = true;
         toast('📅 Перенос? Сталкер перестроит планы');
@@ -1132,16 +1350,19 @@
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       formData = collectFormData();
-      document.getElementById('t-name').textContent = formData.name;
-      document.getElementById('t-date').textContent = formatDateRu(formData.date);
-      document.getElementById('t-time').textContent = formData.time;
-      document.getElementById('t-format').textContent = formData.format;
-      document.getElementById('t-route').textContent = formData.route;
-      document.getElementById('t-sweater').textContent = formData.sweater;
-      document.getElementById('ticket-id').textContent = `№ VRD-${formData.date.replace(/-/g,'')}-❤️`;
-      showScreen('screen3');
-      toast('💌 Билет сформирован! Осталось поставить штамп');
-      launchMiniHearts();
+      completeQuest('q-send');
+      levelClear('LEVEL 2 CLEAR!', 'Анкета пройдена — билет готов!', 200, () => {
+        document.getElementById('t-name').textContent = formData.name;
+        document.getElementById('t-date').textContent = formatDateRu(formData.date);
+        document.getElementById('t-time').textContent = formData.time;
+        document.getElementById('t-format').textContent = formData.format;
+        document.getElementById('t-route').textContent = formData.route;
+        document.getElementById('t-sweater').textContent = formData.sweater;
+        document.getElementById('ticket-id').textContent = `№ VRD-${formData.date.replace(/-/g,'')}-❤️`;
+        showAchievement('💌', 'TICKET GET', 'Билет на прогулку получен!');
+        showScreen('screen3');
+        launchMiniHearts();
+      });
 
       const result = await sendToTelegram(formData);
       if (result.ok) return;
@@ -1177,7 +1398,10 @@
       note.classList.add('show');
 
       launchConfetti();
-      toast('🔥 Штамп поставлен! Миссия выполнена');
+      setXP(100);
+      levelClear('YOU WIN!', 'Миссия выполнена · ' + game.score + ' ⭐', 300, () => {
+        showAchievement('🏆', 'GAME COMPLETE', 'Вредина прошла все уровни!');
+      });
     });
 
     function launchMiniHearts() {
