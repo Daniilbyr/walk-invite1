@@ -445,7 +445,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      z-index: 50;
+      z-index: 150;
       background: rgba(26, 10, 46, 0.88);
       backdrop-filter: blur(12px);
       padding: 10px 16px;
@@ -456,8 +456,8 @@
     }
 
     .music-btn {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       border: none;
       background: var(--accent);
@@ -468,7 +468,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    .music-btn.loading {
+      opacity: 0.6;
+      pointer-events: none;
     }
 
     .music-info {
@@ -620,7 +626,7 @@
       <div class="music-sub">для твоего комфорта и + мне карму 🎸</div>
     </div>
   </div>
-  <audio id="audio" src="./rape-me.mp3" loop preload="auto"></audio>
+  <audio id="audio" src="rape-me.mp3" loop preload="auto" playsinline></audio>
 
   <script>
     /* ── Stars ── */
@@ -881,15 +887,41 @@
     /* ── Music player ── */
     const audio = document.getElementById('audio');
     const musicToggle = document.getElementById('music-toggle');
+    const musicSub = document.querySelector('.music-sub');
     audio.volume = 0.4;
 
-    musicToggle.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play().catch(() => {});
-        musicToggle.textContent = '⏸';
-      } else {
+    function syncMusicButton() {
+      musicToggle.textContent = audio.paused ? '▶' : '⏸';
+      musicToggle.classList.remove('loading');
+    }
+
+    audio.addEventListener('play', syncMusicButton);
+    audio.addEventListener('pause', syncMusicButton);
+    audio.addEventListener('canplaythrough', () => {
+      if (musicSub.dataset.ready) return;
+      musicSub.dataset.ready = '1';
+    });
+    audio.addEventListener('error', () => {
+      musicSub.textContent = 'Трек не загрузился — обнови страницу 🎸';
+      syncMusicButton();
+    });
+
+    musicToggle.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (musicToggle.classList.contains('loading')) return;
+
+      if (!audio.paused) {
         audio.pause();
-        musicToggle.textContent = '▶';
+        return;
+      }
+
+      musicToggle.classList.add('loading');
+      try {
+        if (audio.readyState < 2) audio.load();
+        await audio.play();
+      } catch (err) {
+        musicSub.textContent = 'Нажми ещё раз — браузер требует жест 👆';
+        syncMusicButton();
       }
     });
   </script>
