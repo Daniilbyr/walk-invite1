@@ -215,7 +215,11 @@
       border: 2px solid #e0e0e0; position: relative; z-index: 6;
       transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.2s;
     }
-    .btn-no.escaping { position: fixed; z-index: 100; font-size: 0.85rem; }
+    .btn-no.escaping {
+      position: fixed; z-index: 100; font-size: 0.85rem;
+      margin: 0; white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
 
     .btn-submit {
       width: 100%;
@@ -488,14 +492,14 @@
         <span class="mission-tag">классифицировано · только для тебя</span>
         <h1 id="s1-title">🌸 Ты приглашена на секретную миссию</h1>
         <p class="subtitle" id="s1-subtitle">После ОГЭ по математике. Восстановление нервных клеток гарантировано.</p>
-        <p class="flavor" id="s1-flavor">P.S. Кофта для тебя уже мысленно упакована 🧥</p>
+        <p class="flavor" id="s1-flavor">P.S. Просто прогулка с другом. Ну почти 🌸</p>
         <div class="btn-row" id="btn-row">
           <button class="btn btn-yes" id="btn-yes">Да 💖</button>
           <button class="btn btn-no" id="btn-no">Нет</button>
         </div>
         <p class="persuasion" id="persuasion"></p>
         <div class="abuse-meter" id="abuse-meter" style="display:none">
-          <div class="abuse-meter-label">Уровень абьюза Сталкера</div>
+          <div class="abuse-meter-label">Уровень настойчивости Сталкера</div>
           <div class="abuse-bar"><div class="abuse-fill" id="abuse-fill"></div></div>
         </div>
       </div>
@@ -509,7 +513,7 @@
         <p class="flavor" id="s2-flavor">Ты же сильная и независимая — справишься с формой 💪</p>
 
         <div class="live-preview" id="live-preview">
-          <strong>Превью:</strong> <span id="preview-text">Вредина + Сталкер = прогулка мечты</span>
+          <strong>Превью:</strong> <span id="preview-text">Вредина + Сталкер = крутой вечер</span>
         </div>
 
         <form id="survey-form">
@@ -531,7 +535,7 @@
           <div class="form-group">
             <label>Формат встречи</label>
             <div class="radio-group">
-              <label><input type="radio" name="format" value="stalker" checked> Пусть Сталкер придумает сам (тоже абьюз)</label>
+              <label><input type="radio" name="format" value="stalker" checked> Пусть Сталкер придумает сам (лёгкий абьюз 🤭)</label>
               <label><input type="radio" name="format" value="home"> У моего дома</label>
               <label>
                 <input type="radio" name="format" value="custom"> Свой вариант:
@@ -551,7 +555,7 @@
           </div>
           <div class="form-group">
             <label for="sweater">Кофта</label>
-            <p class="field-hint" id="sweater-hint">Кофта для тебя — моя любимая миссия 🧥</p>
+            <p class="field-hint" id="sweater-hint">Кофта для тебя — дружеская, но с намёком 🧥</p>
             <select id="sweater">
               <option value="carry">Возьму, чтобы ты нёс 💕</option>
               <option value="self">Надену сама, я сильная 💪</option>
@@ -623,11 +627,11 @@
     }
 
     const randomToasts = [
-      '💕 Сталкер следит... но с любовью',
-      '🧥 Кофта для тебя — уже в планах',
-      '📈 Проценты: 100% шанс на классный вечер',
-      '❄️ Будь не сосулькой — нажми что-нибудь',
-      '😈 Абьюзер? Нет, просто очень хочу увидеться'
+      '🌸 Сталкер просто хочет провести время с тобой',
+      '🧥 Кофта для тебя — на всякий случай',
+      '📈 Проценты: высокий шанс на классный вечер',
+      '❄️ Не будь сосулькой — нажми что-нибудь',
+      '😏 Настойчивый? Может быть. Друг? Точно.'
     ];
     setInterval(() => {
       if (Math.random() > 0.92) toast(randomToasts[Math.floor(Math.random() * randomToasts.length)]);
@@ -674,7 +678,7 @@
     document.getElementById('sun').addEventListener('click', () => {
       sunTaps++;
       if (sunTaps === 5) toast('☀️ Солнце одобряет эту прогулку!');
-      if (sunTaps === 10) toast('🔥 Сталкер сгорел от счастья. Перезагрузи страницу 😂');
+      if (sunTaps === 10) toast('🌸 Сталкер перегрелся от предвкушения. Обнови страницу 😂');
     });
 
     /* ── Steps ── */
@@ -701,15 +705,15 @@
 
     const persuasionTexts = [
       'Ты правда не хочешь? 🥺',
-      'Но это прям абьюз... 💔',
-      'Может, тогда на другое время? ⏰'
+      'Ну я же просто друг... который очень ждёт 🌸',
+      'Может, на другое время? Я подожду ⏰'
     ];
-    const noLabels = ['Нет', 'Точно нет?', 'Я сильная и независимая!', 'Ладно, абьюзер...'];
+    const noLabels = ['Нет', 'Точно нет?', 'Я сильная и независимая!', 'Ладно, уговорил...'];
 
     const s1Flavors = [
-      'P.S. Кофта для тебя уже мысленно упакована 🧥',
-      'P.S. Проценты счастья на этой прогулке — без комиссии 📈',
-      'P.S. Сосулька не пройдёт — только ты ❄️💕'
+      'P.S. Просто прогулка с другом. Ну почти 🌸',
+      'P.S. Кофта для тебя — на случай, если станет прохладно 🧥',
+      'P.S. Проценты хорошего настроения — без переплат 📈'
     ];
     let flavorIdx = 0;
     setInterval(() => {
@@ -723,15 +727,15 @@
 
     function goToScreen2(abused) {
       if (abused) {
-        document.getElementById('s2-title').textContent = '😈 Ладно, абьюзер...';
-        document.getElementById('s2-subtitle').textContent = 'Раз ты трижды сказала «нет», вот особые условия:';
-        document.getElementById('s2-flavor').textContent = 'Особые условия = особая прогулка. Справедливо? 😏';
-        toast('😈 Абьюзер mode: activated');
+        document.getElementById('s2-title').textContent = '😏 Ладно, настойчивый Сталкер...';
+        document.getElementById('s2-subtitle').textContent = 'Три «нет» — и ты всё равно здесь. Уважаю упрямство:';
+        document.getElementById('s2-flavor').textContent = 'Заполни анкету — и докажем, что дружба тоже может быть красивой 🌸';
+        toast('😏 Настойчивость: уровень «лучший друг»');
       } else {
         document.getElementById('s2-title').textContent = '📋 Почти готово!';
         document.getElementById('s2-subtitle').textContent = 'Уточни пару деталей, Вредина:';
         document.getElementById('s2-flavor').textContent = 'Ты же сильная и независимая — справишься с формой 💪';
-        toast('💖 Отличный выбор, Вредина!');
+        toast('🌸 Класс! Будет хороший вечер');
         launchMiniHearts();
       }
       showScreen('screen2');
@@ -740,11 +744,34 @@
     btnYes.addEventListener('click', () => goToScreen2(false));
 
     function moveNoButton() {
-      const vw = window.innerWidth, vh = window.innerHeight;
-      const bw = btnNo.offsetWidth, bh = btnNo.offsetHeight;
-      btnNo.classList.add('escaping');
-      btnNo.style.left = Math.max(8, Math.random() * (vw - bw - 16)) + 'px';
-      btnNo.style.top = Math.max(8, Math.random() * (vh - bh - 110)) + 'px';
+      const rect = btnNo.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const pad = 12;
+      const bottomPad = 118;
+
+      if (!btnNo.classList.contains('escaping')) {
+        btnNo.classList.add('escaping');
+        btnNo.style.left = rect.left + 'px';
+        btnNo.style.top = rect.top + 'px';
+      }
+
+      const bw = btnNo.offsetWidth || rect.width;
+      const bh = btnNo.offsetHeight || rect.height;
+      const minX = pad;
+      const maxX = Math.max(minX, vw - bw - pad);
+      const minY = pad;
+      const maxY = Math.max(minY, vh - bh - bottomPad);
+
+      const jump = noClicks === 1 ? 90 : noClicks === 2 ? 140 : 200;
+      let x = rect.left + (Math.random() - 0.5) * jump * 2;
+      let y = rect.top + (Math.random() - 0.5) * jump * 2;
+
+      x = Math.min(maxX, Math.max(minX, x));
+      y = Math.min(maxY, Math.max(minY, y));
+
+      btnNo.style.left = x + 'px';
+      btnNo.style.top = y + 'px';
     }
 
     btnNo.addEventListener('click', () => {
@@ -784,9 +811,9 @@
     });
 
     const sweaterHints = {
-      carry: 'Кофта для тебя — моя любимая миссия 🧥💕',
-      self: 'Сильная и независимая — уважаю! Но кофту всё равно возьму про запас 💪',
-      none: 'Сосулька detected ❄️ Я принесу кофту. Ты не уйдёшь от абьюза 🧥'
+      carry: 'Кофта для тебя — я понёс бы и без повода 🧥',
+      self: 'Сильная и независимая — уважаю! Кофту всё равно возьму «на всякий» 💪',
+      none: 'Сосулька mode ❄️ Окей, кофту беру я. Друг не друг, если не поможет 🧥'
     };
     document.getElementById('sweater').addEventListener('change', (e) => {
       document.getElementById('sweater-hint').textContent = sweaterHints[e.target.value];
@@ -796,7 +823,7 @@
     let nameClicks = 0;
     document.getElementById('name').addEventListener('click', () => {
       nameClicks++;
-      if (nameClicks === 3) toast('😈 Да, ты Вредина. И это комплимент.');
+      if (nameClicks === 3) toast('😊 Лучшее прозвище. Спорить не буду.');
     });
 
     function updatePreview() {
@@ -806,12 +833,12 @@
       if (sweater === 'carry') parts.push('кофта на плечах Сталкера');
       else if (sweater === 'self') parts.push('сильная и независимая');
       else parts.push('закаляется как сосулька');
-      document.getElementById('preview-text').textContent = parts.join(' · ') + ' = 💕';
+      document.getElementById('preview-text').textContent = parts.join(' · ') + ' = 🌸';
     }
     ['name','date','time'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
     updatePreview();
 
-    const formatLabels = { stalker: 'Сталкер придумает (абьюз)', home: 'У дома Вредины', custom: '' };
+    const formatLabels = { stalker: 'Сталкер придумает (дружеский абьюз)', home: 'У дома Вредины', custom: '' };
     const sweaterLabels = {
       carry: 'Возьму, чтобы ты нёс 💕',
       self: 'Надену сама, я сильная 💪',
@@ -893,9 +920,9 @@
     /* ── Stamp ── */
     let stamped = false;
     const loveNotes = [
-      'Ты — моя любимая Вредина. Спасибо, что сказала «да» (или трижды «нет» — тоже считается). Жду нашу прогулку больше, чем результатов ОГЭ. 💕',
-      'Кофта для тебя. Карты для нас. Закат для двоих. Всё остальное — приложится. 🌸',
-      'P.S. Проценты на счастье начисляются с первой минуты прогулки. Без скрытых комиссий. Только ты и я. 📈💕'
+      'Спасибо, что согласилась. С тобой всегда легко — и я это ценю больше, чем говорю вслух. Может, скоро перестану молчать 🌸',
+      'Кофта для тебя. Карты для нас. Закат для двоих. Пока это «просто прогулка»... но мне хочется, чтобы таких было больше.',
+      'P.S. Проценты хорошего настроения растут, когда ты рядом. Пока я друг. Но не всегда таким и останусь 📈'
     ];
 
     document.getElementById('btn-stamp').addEventListener('click', () => {
@@ -907,9 +934,9 @@
 
       const msg = document.getElementById('final-msg');
       if (formData.routeKey === 'stalker') {
-        msg.textContent = '💗 Уже мчусь читать карты и строить маршрут. Готовь кофту, Вредина!';
+        msg.textContent = '💗 Уже смотрю карты и думаю маршрут. Кофту не забудь, Вредина!';
       } else {
-        msg.textContent = '💗 Уже мчусь читать и смотреть, как меня абьюзят. Готовь кофту, Вредина!';
+        msg.textContent = '💗 Уже смотрю, куда ты меня поведёшь. Кофту не забудь, Вредина!';
       }
       msg.classList.add('show');
 
@@ -938,7 +965,7 @@
     function launchConfetti() {
       const container = document.getElementById('confetti');
       const shapes = ['❤️','⭐','💕','✨','🧥','🌸','😈'];
-      const words = ['абьюз','кофта','сосулька','💪','VRD'];
+      const words = ['кофта','сосулька','друг','VRD','🌸'];
       const colors = ['#ff6b9d','#ffd166','#6c5ce7','#ff9a56','#27ae60'];
 
       for (let i = 0; i < 50; i++) {
