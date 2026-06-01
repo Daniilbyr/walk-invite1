@@ -607,6 +607,39 @@
     .viz.active span:nth-child(5) { animation-delay: 0.05s; }
     @keyframes vizBar { from { height: 4px; } to { height: 14px; } }
 
+    /* ── Mobile / lite mode (performance) ── */
+    html.lite .sky { animation: none; }
+    html.lite .sun { animation: none; box-shadow: 0 0 36px 12px rgba(255,180,80,0.45); }
+    html.lite .hearts-layer { display: none !important; }
+    html.lite .star { animation: none !important; opacity: 0.55; }
+    html.lite .clouds-layer { display: none; }
+    html.lite .sky { filter: none !important; }
+    html.lite .splash-emoji,
+    html.lite .btn-start,
+    html.lite .music-btn.playing { animation: none !important; }
+    html.lite .card {
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+      background: rgba(255,255,255,0.98);
+    }
+    html.lite .card::before { display: none; }
+    html.lite .btn-yes { animation: none; }
+    html.lite .music-player,
+    html.lite .level-clear,
+    html.lite .toast { backdrop-filter: none; -webkit-backdrop-filter: none; }
+    html.lite .viz.active span { animation: none; height: 10px; }
+    html.lite .stars-layer,
+    html.lite .clouds-layer,
+    html.lite .hearts-layer { contain: strict; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .sky, .sun, .star, .float-heart, .cloud, .btn-yes { animation: none !important; }
+    }
+
     @media (max-width: 420px) {
       h1 { font-size: 1.28rem; }
       .card { padding: 22px 16px; }
@@ -615,6 +648,11 @@
   </style>
 </head>
 <body>
+<script>
+  if (window.matchMedia('(max-width: 768px), (hover: none) and (pointer: coarse)').matches) {
+    document.documentElement.classList.add('lite');
+  }
+</script>
 
   <div class="splash" id="splash">
     <div class="splash-emoji">🎮</div>
@@ -833,6 +871,8 @@
   <audio id="audio" src="rape-me.mp3" loop preload="auto" playsinline></audio>
 
   <script>
+    const LITE = document.documentElement.classList.contains('lite');
+
     /* ── Splash & START ── */
     document.getElementById('btn-start').addEventListener('click', () => {
       document.getElementById('splash').classList.add('hide');
@@ -917,36 +957,42 @@
       '❄️ Не будь сосулькой — нажми что-нибудь',
       '😈 Абьюзер? Нет, просто очень хочу увидеться'
     ];
-    setInterval(() => {
-      if (Math.random() > 0.92) toast(randomToasts[Math.floor(Math.random() * randomToasts.length)]);
-    }, 12000);
+    if (!LITE) {
+      setInterval(() => {
+        if (Math.random() > 0.92) toast(randomToasts[Math.floor(Math.random() * randomToasts.length)]);
+      }, 12000);
+    }
 
     /* ── Stars & hearts ── */
     (function createStars() {
       const layer = document.getElementById('stars');
-      for (let i = 0; i < 50; i++) {
+      const count = LITE ? 12 : 50;
+      for (let i = 0; i < count; i++) {
         const s = document.createElement('div');
         s.className = 'star';
         const size = Math.random() * 2.5 + 1;
-        s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*45}%;left:${Math.random()*100}%;--dur:${(Math.random()*3+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
+        const dur = LITE ? 0 : (Math.random()*3+2).toFixed(1);
+        s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*45}%;left:${Math.random()*100}%;--dur:${dur}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
         layer.appendChild(s);
       }
     })();
 
-    (function createFloatHearts() {
-      const layer = document.getElementById('hearts');
-      const emojis = ['💕','💖','🌸','✨','🧥'];
-      for (let i = 0; i < 12; i++) {
-        const h = document.createElement('div');
-        h.className = 'float-heart';
-        h.textContent = emojis[i % emojis.length];
-        h.style.cssText = `left:${Math.random()*100}%;--hs:${(Math.random()*10+10).toFixed(0)}px;--fd:${(Math.random()*6+7).toFixed(1)}s;animation-delay:${(Math.random()*8).toFixed(1)}s`;
-        layer.appendChild(h);
-      }
-    })();
+    if (!LITE) {
+      (function createFloatHearts() {
+        const layer = document.getElementById('hearts');
+        const emojis = ['💕','💖','🌸','✨','🧥'];
+        for (let i = 0; i < 12; i++) {
+          const h = document.createElement('div');
+          h.className = 'float-heart';
+          h.textContent = emojis[i % emojis.length];
+          h.style.cssText = `left:${Math.random()*100}%;--hs:${(Math.random()*10+10).toFixed(0)}px;--fd:${(Math.random()*6+7).toFixed(1)}s;animation-delay:${(Math.random()*8).toFixed(1)}s`;
+          layer.appendChild(h);
+        }
+      })();
+    }
 
-    /* ── Tap hearts ── */
-    document.addEventListener('click', (e) => {
+    /* ── Tap hearts (desktop only) ── */
+    if (!LITE) document.addEventListener('click', (e) => {
       if (e.target.closest('.btn-no.escaping')) return;
       const h = document.createElement('div');
       h.className = 'tap-heart';
@@ -1008,14 +1054,16 @@
       'P.S. Проценты хорошего настроения — без переплат 📈'
     ];
     let flavorIdx = 0;
-    setInterval(() => {
-      flavorIdx = (flavorIdx + 1) % s1Flavors.length;
-      const el = document.getElementById('s1-flavor');
-      el.style.animation = 'none';
-      el.offsetHeight;
-      el.textContent = s1Flavors[flavorIdx];
-      el.style.animation = '';
-    }, 5000);
+    if (!LITE) {
+      setInterval(() => {
+        flavorIdx = (flavorIdx + 1) % s1Flavors.length;
+        const el = document.getElementById('s1-flavor');
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.textContent = s1Flavors[flavorIdx];
+        el.style.animation = '';
+      }, 5000);
+    }
 
     function resetNoButton() {
       btnNo.style.display = 'none';
@@ -1156,11 +1204,13 @@
     let nameToastIdx = 0;
 
     function spawnFallingLetters(text, anchor) {
+      if (LITE) return;
       const rect = anchor.getBoundingClientRect();
       const chars = [...text];
       if (!chars.length) chars.push('?');
       const colors = ['#e8437a', '#6c5ce7', '#ffd166', '#ff6b9d', '#2d1b3d'];
-      chars.forEach((ch, i) => {
+      const maxChars = 6;
+      chars.slice(0, maxChars).forEach((ch, i) => {
         setTimeout(() => {
           const el = document.createElement('span');
           el.className = 'falling-letter';
@@ -1175,11 +1225,11 @@
           setTimeout(() => el.remove(), 1500);
         }, i * 35);
       });
-      for (let j = 0; j < 4; j++) {
+      for (let j = 0; j < 2; j++) {
         setTimeout(() => {
           const h = document.createElement('span');
           h.className = 'falling-letter';
-          h.textContent = ['😈', '✨', '💕', '🌸'][j];
+          h.textContent = ['😈', '✨'][j];
           h.style.left = (rect.left + Math.random() * rect.width) + 'px';
           h.style.top = rect.top + 'px';
           h.style.fontSize = '0.9rem';
@@ -1405,7 +1455,8 @@
     });
 
     function launchMiniHearts() {
-      for (let i = 0; i < 8; i++) {
+      const count = LITE ? 2 : 8;
+      for (let i = 0; i < count; i++) {
         setTimeout(() => {
           const h = document.createElement('div');
           h.className = 'tap-heart';
@@ -1424,7 +1475,8 @@
       const words = ['абьюз','кофта','сосулька','💪','VRD'];
       const colors = ['#ff6b9d','#ffd166','#6c5ce7','#ff9a56','#27ae60'];
 
-      for (let i = 0; i < 50; i++) {
+      const count = LITE ? 10 : 50;
+      for (let i = 0; i < count; i++) {
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
         const r = Math.random();
