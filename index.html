@@ -499,7 +499,7 @@
         </div>
         <p class="persuasion" id="persuasion"></p>
         <div class="abuse-meter" id="abuse-meter" style="display:none">
-          <div class="abuse-meter-label">Уровень настойчивости Сталкера</div>
+          <div class="abuse-meter-label">Уровень абьюза Сталкера</div>
           <div class="abuse-bar"><div class="abuse-fill" id="abuse-fill"></div></div>
         </div>
       </div>
@@ -535,7 +535,7 @@
           <div class="form-group">
             <label>Формат встречи</label>
             <div class="radio-group">
-              <label><input type="radio" name="format" value="stalker" checked> Пусть Сталкер придумает сам (лёгкий абьюз 🤭)</label>
+              <label><input type="radio" name="format" value="stalker" checked> Пусть Сталкер придумает сам (тоже абьюз)</label>
               <label><input type="radio" name="format" value="home"> У моего дома</label>
               <label>
                 <input type="radio" name="format" value="custom"> Свой вариант:
@@ -631,7 +631,7 @@
       '🧥 Кофта для тебя — на всякий случай',
       '📈 Проценты: высокий шанс на классный вечер',
       '❄️ Не будь сосулькой — нажми что-нибудь',
-      '😏 Настойчивый? Может быть. Друг? Точно.'
+      '😈 Абьюзер? Нет, просто очень хочу увидеться'
     ];
     setInterval(() => {
       if (Math.random() > 0.92) toast(randomToasts[Math.floor(Math.random() * randomToasts.length)]);
@@ -705,10 +705,10 @@
 
     const persuasionTexts = [
       'Ты правда не хочешь? 🥺',
-      'Ну я же просто друг... который очень ждёт 🌸',
-      'Может, на другое время? Я подожду ⏰'
+      'Но это прям абьюз... 💔',
+      'Может, тогда на другое время? ⏰'
     ];
-    const noLabels = ['Нет', 'Точно нет?', 'Я сильная и независимая!', 'Ладно, уговорил...'];
+    const noLabels = ['Нет', 'Точно нет?', 'Я сильная и независимая!', 'Ладно, абьюзер...'];
 
     const s1Flavors = [
       'P.S. Просто прогулка с другом. Ну почти 🌸',
@@ -727,10 +727,10 @@
 
     function goToScreen2(abused) {
       if (abused) {
-        document.getElementById('s2-title').textContent = '😏 Ладно, настойчивый Сталкер...';
-        document.getElementById('s2-subtitle').textContent = 'Три «нет» — и ты всё равно здесь. Уважаю упрямство:';
-        document.getElementById('s2-flavor').textContent = 'Заполни анкету — и докажем, что дружба тоже может быть красивой 🌸';
-        toast('😏 Настойчивость: уровень «лучший друг»');
+        document.getElementById('s2-title').textContent = '😈 Ладно, абьюзер...';
+        document.getElementById('s2-subtitle').textContent = 'Раз ты трижды сказала «нет», вот особые условия:';
+        document.getElementById('s2-flavor').textContent = 'Особые условия = особая прогулка. Справедливо? 😏';
+        toast('😈 Абьюзер mode: activated');
       } else {
         document.getElementById('s2-title').textContent = '📋 Почти готово!';
         document.getElementById('s2-subtitle').textContent = 'Уточни пару деталей, Вредина:';
@@ -813,7 +813,7 @@
     const sweaterHints = {
       carry: 'Кофта для тебя — я понёс бы и без повода 🧥',
       self: 'Сильная и независимая — уважаю! Кофту всё равно возьму «на всякий» 💪',
-      none: 'Сосулька mode ❄️ Окей, кофту беру я. Друг не друг, если не поможет 🧥'
+      none: 'Сосулька detected ❄️ Я принесу кофту. Ты не уйдёшь от абьюза 🧥'
     };
     document.getElementById('sweater').addEventListener('change', (e) => {
       document.getElementById('sweater-hint').textContent = sweaterHints[e.target.value];
@@ -838,7 +838,7 @@
     ['name','date','time'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
     updatePreview();
 
-    const formatLabels = { stalker: 'Сталкер придумает (дружеский абьюз)', home: 'У дома Вредины', custom: '' };
+    const formatLabels = { stalker: 'Сталкер придумает (абьюз)', home: 'У дома Вредины', custom: '' };
     const sweaterLabels = {
       carry: 'Возьму, чтобы ты нёс 💕',
       self: 'Надену сама, я сильная 💪',
@@ -934,9 +934,9 @@
 
       const msg = document.getElementById('final-msg');
       if (formData.routeKey === 'stalker') {
-        msg.textContent = '💗 Уже смотрю карты и думаю маршрут. Кофту не забудь, Вредина!';
+        msg.textContent = '💗 Уже мчусь читать карты и строить маршрут. Готовь кофту, Вредина!';
       } else {
-        msg.textContent = '💗 Уже смотрю, куда ты меня поведёшь. Кофту не забудь, Вредина!';
+        msg.textContent = '💗 Уже мчусь читать и смотреть, как меня абьюзят. Готовь кофту, Вредина!';
       }
       msg.classList.add('show');
 
@@ -965,7 +965,7 @@
     function launchConfetti() {
       const container = document.getElementById('confetti');
       const shapes = ['❤️','⭐','💕','✨','🧥','🌸','😈'];
-      const words = ['кофта','сосулька','друг','VRD','🌸'];
+      const words = ['абьюз','кофта','сосулька','💪','VRD'];
       const colors = ['#ff6b9d','#ffd166','#6c5ce7','#ff9a56','#27ae60'];
 
       for (let i = 0; i < 50; i++) {
