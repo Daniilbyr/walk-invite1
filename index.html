@@ -261,8 +261,25 @@
     }
     .field-hint {
       font-size: 0.72rem; color: #9b7aad; font-weight: 600;
-      margin-bottom: 6px; font-style: italic;
+      margin-bottom: 6px; font-style: italic; line-height: 1.4;
     }
+    .form-intro {
+      margin-bottom: 16px; padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(255,107,157,0.07), rgba(108,92,231,0.07));
+      border-radius: 16px; border: 1px dashed rgba(255,107,157,0.25);
+      font-size: 0.8rem; line-height: 1.55; color: #5c3d6e;
+    }
+    .form-intro strong { color: var(--accent-dark); }
+    .form-section {
+      font-size: 0.7rem; font-weight: 900; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--purple);
+      margin: 4px 0 10px; opacity: 0.75;
+    }
+    .radio-hint {
+      display: block; font-size: 0.68rem; font-weight: 600;
+      color: #b08cc4; font-style: italic; margin: 2px 0 0 24px; line-height: 1.35;
+    }
+    .radio-group label:has(input:checked) .radio-hint { color: #8b6a9e; }
     .form-group input[type="text"],
     .form-group input[type="date"],
     .form-group input[type="time"],
@@ -286,12 +303,20 @@
     .inline-input.hidden { display: none; }
 
     .live-preview {
-      margin: 14px 0 6px; padding: 12px 14px;
+      margin: 14px 0 6px; padding: 14px 16px;
       background: linear-gradient(135deg, rgba(108,92,231,0.06), rgba(255,107,157,0.06));
-      border-radius: 14px; border: 1px solid rgba(108,92,231,0.15);
-      font-size: 0.78rem; line-height: 1.5; color: #5c3d6e;
+      border-radius: 16px; border: 1px solid rgba(108,92,231,0.15);
+      font-size: 0.78rem; line-height: 1.55; color: #5c3d6e;
     }
-    .live-preview strong { color: var(--purple); }
+    .live-preview strong { color: var(--purple); display: block; margin-bottom: 8px; font-size: 0.82rem; }
+    .preview-row {
+      display: flex; justify-content: space-between; gap: 8px;
+      padding: 4px 0; border-bottom: 1px dotted rgba(108,92,231,0.12);
+      font-size: 0.75rem;
+    }
+    .preview-row:last-child { border-bottom: none; padding-top: 8px; font-weight: 800; color: var(--accent-dark); justify-content: center; }
+    .preview-label { color: #8b6a9e; font-weight: 700; flex-shrink: 0; }
+    .preview-val { text-align: right; font-weight: 600; }
 
     /* ── Ticket ── */
     .ticket {
@@ -492,7 +517,7 @@
         <span class="mission-tag">классифицировано · только для тебя</span>
         <h1 id="s1-title">🌸 Ты приглашена на секретную миссию</h1>
         <p class="subtitle" id="s1-subtitle">После ОГЭ по математике. Восстановление нервных клеток гарантировано.</p>
-        <p class="flavor" id="s1-flavor">P.S. Просто прогулка с другом. Ну почти 🌸</p>
+        <p class="flavor" id="s1-flavor">P.S. Свою кофту возьмёшь — потом мне отдашь. «Кофта для тебя» 🧥</p>
         <div class="btn-row" id="btn-row">
           <button class="btn btn-yes" id="btn-yes">Да 💖</button>
           <button class="btn btn-no" id="btn-no">Нет</button>
@@ -512,52 +537,85 @@
         <p class="subtitle" id="s2-subtitle">Уточни пару деталей, Вредина:</p>
         <p class="flavor" id="s2-flavor">Ты же сильная и независимая — справишься с формой 💪</p>
 
+        <div class="form-intro">
+          <strong>Миссия:</strong> заполнить анкету без лишнего абьюза (но Сталкер не обещает).
+          Все поля обязательны для получения билета. Кофту — по классической схеме 🧥
+        </div>
+
         <div class="live-preview" id="live-preview">
-          <strong>Превью:</strong> <span id="preview-text">Вредина + Сталкер = крутой вечер</span>
+          <strong>📋 Превью билета</strong>
+          <div class="preview-row"><span class="preview-label">Кто</span><span class="preview-val" id="pv-name">Вредина</span></div>
+          <div class="preview-row"><span class="preview-label">Когда</span><span class="preview-val" id="pv-when">02.06.2025 · 15:30</span></div>
+          <div class="preview-row"><span class="preview-label">Формат</span><span class="preview-val" id="pv-format">Сталкер придумает</span></div>
+          <div class="preview-row"><span class="preview-label">Маршрут</span><span class="preview-val" id="pv-route">Куда захочешь</span></div>
+          <div class="preview-row"><span class="preview-label">Кофта</span><span class="preview-val" id="pv-sweater">Своя → Сталкер несёт</span></div>
+          <div class="preview-row" id="pv-summary">= крутой вечер 🌸</div>
         </div>
 
         <form id="survey-form">
+          <p class="form-section">👤 Кто едет</p>
           <div class="form-group">
-            <label for="name">Имя</label>
-            <p class="field-hint">Официально или по прозвищу — оба засчитываются</p>
+            <label for="name">Имя / позывной</label>
+            <p class="field-hint">Официально «Вредина» или как в переписке — оба варианта засчитываются. Сталкер всё равно так и напишет 😊</p>
             <input type="text" id="name" value="Вредина">
           </div>
+
+          <p class="form-section">📅 Когда</p>
           <div class="form-group">
             <label for="date">Дата</label>
-            <p class="field-hint">ОГЭ позади — теперь только закаты и проценты счастья 📈</p>
+            <p class="field-hint">ОГЭ по математике позади — нервные клетки восстанавливаем прогулкой. Проценты счастья — без скрытых комиссий 📈</p>
             <input type="date" id="date" value="2025-06-02">
           </div>
           <div class="form-group">
             <label for="time">Время</label>
-            <p class="field-hint">Не сосулька — приходи вовремя (или я подожду ❄️)</p>
+            <p class="field-hint">Не будь сосулькой — приходи вовремя ❄️ Опоздаешь — подожду. Это не абьюз, это забота (almost)</p>
             <input type="time" id="time" step="1" value="15:30:00">
           </div>
+
+          <p class="form-section">🎭 Как встречаемся</p>
           <div class="form-group">
             <label>Формат встречи</label>
+            <p class="field-hint">Выбери, насколько сильно хочешь абьюзить Сталкера планированием</p>
             <div class="radio-group">
-              <label><input type="radio" name="format" value="stalker" checked> Пусть Сталкер придумает сам (тоже абьюз)</label>
-              <label><input type="radio" name="format" value="home"> У моего дома</label>
+              <label>
+                <input type="radio" name="format" value="stalker" checked> Пусть Сталкер придумает сам (тоже абьюз)
+                <span class="radio-hint">«Я сам решу» — классика. Ты сильная и независимая, но отдыхаешь 🌸</span>
+              </label>
+              <label>
+                <input type="radio" name="format" value="home"> У моего дома
+                <span class="radio-hint">Старт у тебя — удобно. Сталкер придёт без карты, но с улыбкой</span>
+              </label>
               <label>
                 <input type="radio" name="format" value="custom"> Свой вариант:
-                <input type="text" class="inline-input hidden" id="format-custom" placeholder="Твой вариант...">
+                <span class="radio-hint">Полный контроль. Maximum abuse mode для Сталкера 😈</span>
+                <input type="text" class="inline-input hidden" id="format-custom" placeholder="Кафе, парк, где угодно...">
               </label>
             </div>
           </div>
+
+          <p class="form-section">🗺 Куда идём</p>
           <div class="form-group">
             <label>Маршрут</label>
+            <p class="field-hint">Сталкер умеет в карты. Но если есть мечта — пиши</p>
             <div class="radio-group">
-              <label><input type="radio" name="route" value="stalker" checked> Куда захочешь, Сталкер</label>
+              <label>
+                <input type="radio" name="route" value="stalker" checked> Куда захочешь, Сталкер
+                <span class="radio-hint">Доверие level: максимум. Я построю маршрут под закат</span>
+              </label>
               <label>
                 <input type="radio" name="route" value="custom"> Напишу, куда хочу:
-                <input type="text" class="inline-input hidden" id="route-custom" placeholder="Куда идём?">
+                <span class="radio-hint">Ты ведёшь — я следую. Reverse abuse 🔄</span>
+                <input type="text" class="inline-input hidden" id="route-custom" placeholder="Набережная, центр, секретное место...">
               </label>
             </div>
           </div>
+
+          <p class="form-section">🧥 Кофта (важный пункт)</p>
           <div class="form-group">
             <label for="sweater">Кофта</label>
-            <p class="field-hint" id="sweater-hint">Кофта для тебя — дружеская, но с намёком 🧥</p>
+            <p class="field-hint" id="sweater-hint">Схема «кофта для тебя»: ты берёшь свою → потом отдаёшь → я несу. Win-win 🧥</p>
             <select id="sweater">
-              <option value="carry">Возьму, чтобы ты нёс 💕</option>
+              <option value="carry">Возьму свою, потом отдам тебе нести 💕</option>
               <option value="self">Надену сама, я сильная 💪</option>
               <option value="none">Не возьму, закаляюсь ❄️</option>
             </select>
@@ -609,7 +667,7 @@
     /* ── Splash ── */
     const splashTexts = [
       'Сталкер загружает чувства...',
-      'Упаковываю кофту для тебя...',
+      'Ты возьмёшь кофту... потом отдашь мне нести 🧥',
       'Считаю проценты счастья...',
       'Размораживаю сосульку...'
     ];
@@ -628,7 +686,7 @@
 
     const randomToasts = [
       '🌸 Сталкер просто хочет провести время с тобой',
-      '🧥 Кофта для тебя — на всякий случай',
+      '🧥 Кофта для тебя: ты берёшь → отдаёшь → я несу',
       '📈 Проценты: высокий шанс на классный вечер',
       '❄️ Не будь сосулькой — нажми что-нибудь',
       '😈 Абьюзер? Нет, просто очень хочу увидеться'
@@ -712,7 +770,7 @@
 
     const s1Flavors = [
       'P.S. Просто прогулка с другом. Ну почти 🌸',
-      'P.S. Кофта для тебя — на случай, если станет прохладно 🧥',
+      'P.S. Свою кофту возьмёшь — потом мне отдашь. «Кофта для тебя» 🧥',
       'P.S. Проценты хорошего настроения — без переплат 📈'
     ];
     let flavorIdx = 0;
@@ -809,11 +867,13 @@
         updatePreview();
       });
     });
+    document.getElementById('format-custom').addEventListener('input', updatePreview);
+    document.getElementById('route-custom').addEventListener('input', updatePreview);
 
     const sweaterHints = {
-      carry: 'Кофта для тебя — я понёс бы и без повода 🧥',
-      self: 'Сильная и независимая — уважаю! Кофту всё равно возьму «на всякий» 💪',
-      none: 'Сосулька detected ❄️ Я принесу кофту. Ты не уйдёшь от абьюза 🧥'
+      carry: 'Классика «кофта для тебя»: своя кофта → в руки Сталкера → он несёт. Абьюз? Да. Удобно? Тоже да 🧥',
+      self: 'Сильная и независимая — respect 💪 Но если станет жарко, схема с кофтой всё равно работает',
+      none: 'Сосулька mode ❄️ Ладно, тогда кофту беру я. Ты не уйдёшь от абьюза 🧥'
     };
     document.getElementById('sweater').addEventListener('change', (e) => {
       document.getElementById('sweater-hint').textContent = sweaterHints[e.target.value];
@@ -828,19 +888,40 @@
 
     function updatePreview() {
       const name = document.getElementById('name').value || 'Вредина';
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const formatVal = document.querySelector('input[name="format"]:checked').value;
+      const routeVal = document.querySelector('input[name="route"]:checked').value;
       const sweater = document.getElementById('sweater').value;
-      const parts = [`${name} + Сталкер`];
-      if (sweater === 'carry') parts.push('кофта на плечах Сталкера');
-      else if (sweater === 'self') parts.push('сильная и независимая');
-      else parts.push('закаляется как сосулька');
-      document.getElementById('preview-text').textContent = parts.join(' · ') + ' = 🌸';
+
+      let formatShort = 'Сталкер придумает';
+      if (formatVal === 'home') formatShort = 'У дома Вредины';
+      else if (formatVal === 'custom') formatShort = document.getElementById('format-custom').value || 'Свой вариант';
+
+      let routeShort = 'Куда захочешь';
+      if (routeVal === 'custom') routeShort = document.getElementById('route-custom').value || 'Напишу сама';
+
+      const sweaterShort = {
+        carry: 'Своя → Сталкер несёт',
+        self: 'Сама наденет 💪',
+        none: 'Сосулька ❄️'
+      }[sweater];
+
+      const when = date ? `${formatDateRu(date)} · ${time.slice(0, 5)}` : '—';
+
+      document.getElementById('pv-name').textContent = name;
+      document.getElementById('pv-when').textContent = when;
+      document.getElementById('pv-format').textContent = formatShort;
+      document.getElementById('pv-route').textContent = routeShort;
+      document.getElementById('pv-sweater').textContent = sweaterShort;
+      document.getElementById('pv-summary').textContent = `${name} + Сталкер = крутой вечер 🌸`;
     }
     ['name','date','time'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
     updatePreview();
 
     const formatLabels = { stalker: 'Сталкер придумает (абьюз)', home: 'У дома Вредины', custom: '' };
     const sweaterLabels = {
-      carry: 'Возьму, чтобы ты нёс 💕',
+      carry: 'Своя кофта → отдам Сталкеру нести 💕',
       self: 'Надену сама, я сильная 💪',
       none: 'Не возьму, закаляюсь ❄️'
     };
