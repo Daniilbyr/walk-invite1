@@ -6,17 +6,19 @@
   <title>Секретная миссия для Вредины 🌸</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --accent: #ff6b9d;
       --accent-dark: #e8437a;
+      --accent-glow: rgba(255, 107, 157, 0.45);
+      --purple: #6c5ce7;
       --gold: #ffd166;
       --text: #2d1b3d;
-      --card-bg: rgba(255, 255, 255, 0.92);
-      --shadow: 0 8px 32px rgba(45, 27, 61, 0.18);
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --shadow: 0 12px 40px rgba(45, 27, 61, 0.2);
     }
 
     html, body {
@@ -26,479 +28,423 @@
       overflow-x: hidden;
     }
 
-    /* ── Animated sunset background ── */
-    .sky {
+    /* ── Splash ── */
+    .splash {
       position: fixed;
       inset: 0;
-      z-index: 0;
-      background: linear-gradient(180deg,
-        #1a0a2e 0%,
-        #4a1942 18%,
-        #c44569 42%,
-        #ff6b6b 58%,
-        #ffa07a 72%,
-        #ffd166 85%,
-        #fff0d4 100%);
+      z-index: 9999;
+      background: linear-gradient(135deg, #1a0a2e, #c44569);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.6s, visibility 0.6s;
+    }
+    .splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+    .splash-emoji { font-size: 3rem; animation: bounce 1s ease infinite; }
+    .splash-text { color: #fff; font-weight: 800; font-size: 1rem; text-align: center; padding: 0 24px; }
+    .splash-bar { width: 120px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+    .splash-bar span { display: block; height: 100%; background: var(--gold); border-radius: 4px; animation: loadBar 1.4s ease forwards; }
+    @keyframes loadBar { from { width: 0; } to { width: 100%; } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    /* ── Sky ── */
+    .sky {
+      position: fixed; inset: 0; z-index: 0;
+      background: linear-gradient(180deg, #1a0a2e 0%, #4a1942 18%, #c44569 42%, #ff6b6b 58%, #ffa07a 72%, #ffd166 85%, #fff0d4 100%);
       animation: skyShift 18s ease-in-out infinite alternate;
     }
-
     @keyframes skyShift {
-      0%   { filter: hue-rotate(0deg) brightness(1); }
+      0% { filter: hue-rotate(0deg) brightness(1); }
       100% { filter: hue-rotate(12deg) brightness(1.05); }
     }
 
     .sun {
-      position: fixed;
-      bottom: 18%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
+      position: fixed; bottom: 18%; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 90px; border-radius: 50%; cursor: pointer;
       background: radial-gradient(circle, #fff8e7 0%, #ffd166 40%, #ff9a56 100%);
       box-shadow: 0 0 60px 20px rgba(255, 180, 80, 0.55);
-      z-index: 1;
-      animation: sunPulse 4s ease-in-out infinite;
+      z-index: 1; animation: sunPulse 4s ease-in-out infinite;
     }
-
     @keyframes sunPulse {
-      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 60px 20px rgba(255, 180, 80, 0.55); }
-      50%      { transform: translateX(-50%) scale(1.12); box-shadow: 0 0 80px 30px rgba(255, 180, 80, 0.7); }
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.12); box-shadow: 0 0 80px 30px rgba(255, 180, 80, 0.7); }
     }
 
-    .stars-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
+    .stars-layer, .hearts-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle var(--dur, 3s) ease-in-out infinite alternate; }
+    @keyframes twinkle { 0% { opacity: 0.15; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
+
+    .float-heart {
+      position: absolute; font-size: var(--hs, 14px); opacity: 0;
+      animation: floatUp var(--fd, 8s) ease-in infinite;
+    }
+    @keyframes floatUp {
+      0% { opacity: 0; transform: translateY(100vh) rotate(0deg); }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.5; }
+      100% { opacity: 0; transform: translateY(-10vh) rotate(360deg); }
     }
 
-    .star {
-      position: absolute;
-      background: #fff;
-      border-radius: 50%;
-      animation: twinkle var(--dur, 3s) ease-in-out infinite alternate;
-    }
-
-    @keyframes twinkle {
-      0%   { opacity: 0.15; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1.2); }
-    }
-
-    .clouds-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .cloud {
-      position: absolute;
-      opacity: 0.55;
-      animation: drift linear infinite;
-    }
-
-    .cloud::before,
-    .cloud::after {
-      content: '';
-      position: absolute;
-      background: rgba(255, 255, 255, 0.75);
-      border-radius: 50%;
-    }
-
+    .clouds-layer { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+    .cloud { position: absolute; opacity: 0.55; animation: drift linear infinite; }
+    .cloud::before, .cloud::after { content: ''; position: absolute; background: rgba(255,255,255,0.75); border-radius: 50%; }
     .cloud-1 { width: 120px; height: 40px; top: 12%; animation-duration: 38s; }
     .cloud-1::before { width: 50px; height: 50px; top: -25px; left: 15px; }
-    .cloud-1::after  { width: 65px; height: 65px; top: -35px; left: 45px; }
-
+    .cloud-1::after { width: 65px; height: 65px; top: -35px; left: 45px; }
     .cloud-2 { width: 100px; height: 35px; top: 22%; animation-duration: 52s; animation-delay: -10s; }
     .cloud-2::before { width: 45px; height: 45px; top: -22px; left: 10px; }
-    .cloud-2::after  { width: 55px; height: 55px; top: -28px; left: 38px; }
-
+    .cloud-2::after { width: 55px; height: 55px; top: -28px; left: 38px; }
     .cloud-3 { width: 140px; height: 45px; top: 8%; animation-duration: 44s; animation-delay: -20s; }
     .cloud-3::before { width: 55px; height: 55px; top: -28px; left: 20px; }
-    .cloud-3::after  { width: 70px; height: 70px; top: -38px; left: 55px; }
-
+    .cloud-3::after { width: 70px; height: 70px; top: -38px; left: 55px; }
     .cloud-4 { width: 90px; height: 32px; top: 30%; animation-duration: 60s; animation-delay: -30s; }
     .cloud-4::before { width: 40px; height: 40px; top: -20px; left: 8px; }
-    .cloud-4::after  { width: 50px; height: 50px; top: -26px; left: 32px; }
-
-    @keyframes drift {
-      0%   { left: -160px; }
-      100% { left: calc(100% + 160px); }
-    }
+    .cloud-4::after { width: 50px; height: 50px; top: -26px; left: 32px; }
+    @keyframes drift { 0% { left: -160px; } 100% { left: calc(100% + 160px); } }
 
     /* ── Layout ── */
     .app {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px 16px 100px;
+      position: relative; z-index: 10; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px 16px 110px;
     }
 
-    .screen {
-      display: none;
-      width: 100%;
-      max-width: 420px;
-      animation: fadeIn 0.5s ease;
+    .top-bar {
+      width: 100%; max-width: 420px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
     }
+    .badge {
+      font-size: 0.72rem; font-weight: 800; padding: 6px 12px;
+      border-radius: 50px; letter-spacing: 0.5px;
+    }
+    .badge-stalker { background: rgba(108,92,231,0.15); color: var(--purple); border: 1px solid rgba(108,92,231,0.3); }
+    .badge-vredina { background: rgba(255,107,157,0.15); color: var(--accent-dark); border: 1px solid rgba(255,107,157,0.3); }
 
+    .steps {
+      display: flex; gap: 6px; align-items: center;
+    }
+    .step-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.35); transition: all 0.4s;
+    }
+    .step-dot.active { width: 22px; border-radius: 4px; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+
+    .screen { display: none; width: 100%; max-width: 420px; animation: fadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
     .screen.active { display: block; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: none; } }
 
     .card {
-      background: var(--card-bg);
-      border-radius: 24px;
-      padding: 28px 22px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
+      position: relative;
+      background: var(--card-bg); border-radius: 28px;
+      padding: 28px 22px; box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.6);
+      overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; inset: -1px; border-radius: 28px; padding: 2px;
+      background: linear-gradient(135deg, var(--accent), var(--purple), var(--gold), var(--accent));
+      background-size: 300% 300%;
+      animation: borderGlow 6s ease infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none; opacity: 0.55;
+    }
+    @keyframes borderGlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     h1 {
-      font-size: 1.45rem;
-      font-weight: 800;
-      line-height: 1.35;
-      text-align: center;
-      margin-bottom: 12px;
+      font-size: 1.45rem; font-weight: 900; line-height: 1.35;
+      text-align: center; margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--accent-dark), var(--purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .subtitle {
-      font-size: 0.95rem;
-      text-align: center;
-      color: #5c3d6e;
-      line-height: 1.5;
-      margin-bottom: 24px;
+      font-size: 0.93rem; text-align: center; color: #5c3d6e;
+      line-height: 1.55; margin-bottom: 8px;
+    }
+    .flavor {
+      text-align: center; font-size: 0.78rem; font-weight: 700;
+      color: var(--accent-dark); opacity: 0.85;
+      min-height: 20px; margin-bottom: 18px;
+      animation: flavorIn 0.4s ease;
+    }
+    @keyframes flavorIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 0.85; transform: none; } }
+
+    .mission-tag {
+      display: block; text-align: center;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--purple);
+      margin-bottom: 10px; opacity: 0.7;
     }
 
     /* ── Buttons ── */
     .btn-row {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      align-items: center;
-      position: relative;
-      min-height: 120px;
+      display: flex; flex-direction: column; gap: 14px;
+      align-items: center; position: relative; min-height: 120px;
     }
-
     .btn {
-      font-family: 'Nunito', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 50px;
-      padding: 14px 36px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      -webkit-tap-highlight-color: transparent;
+      font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800;
+      border: none; border-radius: 50px; padding: 14px 36px;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     }
-
     .btn:active { transform: scale(0.96); }
 
     .btn-yes {
       background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(255, 107, 157, 0.45);
-      transform-origin: center;
-      z-index: 5;
+      color: #fff; box-shadow: 0 4px 24px var(--accent-glow);
+      transform-origin: center; z-index: 5;
+      animation: yesGlow 2.5s ease-in-out infinite;
+    }
+    @keyframes yesGlow {
+      0%, 100% { box-shadow: 0 4px 24px var(--accent-glow); }
+      50% { box-shadow: 0 4px 36px rgba(255,107,157,0.65), 0 0 0 8px rgba(255,107,157,0.1); }
     }
 
     .btn-no {
-      background: rgba(255, 255, 255, 0.85);
-      color: #888;
-      border: 2px solid #ddd;
-      position: relative;
-      z-index: 6;
+      background: rgba(255,255,255,0.9); color: #999;
+      border: 2px solid #e0e0e0; position: relative; z-index: 6;
+      transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.2s;
     }
-
-    .btn-no.escaping {
-      position: fixed;
-      z-index: 100;
-    }
+    .btn-no.escaping { position: fixed; z-index: 100; font-size: 0.85rem; }
 
     .btn-submit {
       width: 100%;
-      background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
-      margin-top: 8px;
+      background: linear-gradient(135deg, var(--purple), #a29bfe);
+      color: #fff; box-shadow: 0 4px 20px rgba(108,92,231,0.4); margin-top: 8px;
     }
-
     .btn-stamp {
       width: 100%;
       background: linear-gradient(135deg, var(--gold), #f4a261);
-      color: var(--text);
-      box-shadow: 0 4px 20px rgba(255, 209, 102, 0.5);
-      margin-top: 16px;
+      color: var(--text); box-shadow: 0 4px 20px rgba(255,209,102,0.5); margin-top: 16px;
     }
 
     .persuasion {
-      text-align: center;
-      font-size: 0.92rem;
-      color: var(--accent-dark);
-      font-weight: 600;
-      min-height: 24px;
-      margin-top: 8px;
-      transition: opacity 0.3s;
+      text-align: center; font-size: 0.92rem; color: var(--accent-dark);
+      font-weight: 700; min-height: 44px; margin-top: 10px;
+      line-height: 1.45; transition: opacity 0.3s;
+    }
+    .persuasion.pop { animation: popText 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes popText { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    .abuse-meter {
+      margin-top: 12px; padding: 10px 14px;
+      background: rgba(255,107,157,0.08); border-radius: 14px;
+      border: 1px dashed rgba(255,107,157,0.3);
+    }
+    .abuse-meter-label { font-size: 0.72rem; font-weight: 800; color: var(--accent-dark); margin-bottom: 6px; }
+    .abuse-bar { height: 8px; background: rgba(255,107,157,0.15); border-radius: 4px; overflow: hidden; }
+    .abuse-fill {
+      height: 100%; width: 0; border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     /* ── Form ── */
-    .form-group {
-      margin-bottom: 18px;
-    }
-
+    .form-group { margin-bottom: 16px; }
     .form-group label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #5c3d6e;
+      display: block; font-size: 0.85rem; font-weight: 800;
+      margin-bottom: 4px; color: #5c3d6e;
     }
-
+    .field-hint {
+      font-size: 0.72rem; color: #9b7aad; font-weight: 600;
+      margin-bottom: 6px; font-style: italic;
+    }
     .form-group input[type="text"],
     .form-group input[type="date"],
     .form-group input[type="time"],
     .form-group select {
-      width: 100%;
-      font-family: 'Nunito', sans-serif;
-      font-size: 0.95rem;
-      padding: 10px 14px;
-      border: 2px solid #e8d5f0;
-      border-radius: 12px;
-      background: #fff;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
+      width: 100%; font-family: 'Nunito', sans-serif; font-size: 0.95rem;
+      padding: 10px 14px; border: 2px solid #e8d5f0; border-radius: 14px;
+      background: #fff; color: var(--text); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--accent);
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,107,157,0.15);
     }
-
-    .radio-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .radio-group { display: flex; flex-direction: column; gap: 8px; }
     .radio-group label {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-weight: 600;
-      font-size: 0.88rem;
-      cursor: pointer;
-      line-height: 1.4;
+      display: flex; align-items: flex-start; gap: 8px;
+      font-weight: 600; font-size: 0.86rem; cursor: pointer; line-height: 1.4;
+      padding: 8px 10px; border-radius: 12px; transition: background 0.2s;
     }
-
-    .radio-group input[type="radio"] {
-      margin-top: 3px;
-      accent-color: var(--accent);
-      flex-shrink: 0;
-    }
-
-    .inline-input {
-      margin-top: 6px;
-      width: 100%;
-    }
-
+    .radio-group label:has(input:checked) { background: rgba(255,107,157,0.08); }
+    .radio-group input[type="radio"] { margin-top: 3px; accent-color: var(--accent); flex-shrink: 0; }
+    .inline-input { margin-top: 6px; width: 100%; }
     .inline-input.hidden { display: none; }
+
+    .live-preview {
+      margin: 14px 0 6px; padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(108,92,231,0.06), rgba(255,107,157,0.06));
+      border-radius: 14px; border: 1px solid rgba(108,92,231,0.15);
+      font-size: 0.78rem; line-height: 1.5; color: #5c3d6e;
+    }
+    .live-preview strong { color: var(--purple); }
 
     /* ── Ticket ── */
     .ticket {
-      border: 3px dashed var(--accent);
-      border-radius: 16px;
-      padding: 22px 18px;
+      border: 3px dashed var(--accent); border-radius: 16px;
+      padding: 22px 18px 18px;
       background: linear-gradient(135deg, #fff9fb 0%, #fff5f8 100%);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
+    .ticket::before, .ticket::after {
+      content: ''; position: absolute; top: 50%; width: 18px; height: 18px;
+      background: #f0e0f0; border-radius: 50%; transform: translateY(-50%);
+    }
+    .ticket::before { left: -10px; }
+    .ticket::after { right: -10px; }
 
     .ticket-header {
-      text-align: center;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 3px;
-      color: var(--accent-dark);
-      margin-bottom: 16px;
-      text-transform: uppercase;
+      text-align: center; font-size: 0.72rem; font-weight: 900;
+      letter-spacing: 3px; color: var(--accent-dark);
+      margin-bottom: 4px; text-transform: uppercase;
     }
-
+    .ticket-id {
+      text-align: center; font-size: 0.65rem; color: #b08cc4;
+      margin-bottom: 14px; letter-spacing: 1px;
+    }
     .ticket-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 7px 0;
-      border-bottom: 1px dotted #e8c4d8;
-      font-size: 0.88rem;
-      gap: 8px;
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 7px 0; border-bottom: 1px dotted #e8c4d8;
+      font-size: 0.86rem; gap: 8px;
     }
-
     .ticket-row:last-of-type { border-bottom: none; }
-
-    .ticket-label {
-      font-weight: 700;
-      color: #8b6a9e;
-      flex-shrink: 0;
+    .ticket-label { font-weight: 800; color: #8b6a9e; flex-shrink: 0; }
+    .ticket-value { text-align: right; font-weight: 700; }
+    .ticket-barcode {
+      margin: 14px auto 0; height: 32px; max-width: 200px;
+      background: repeating-linear-gradient(90deg, #2d1b3d 0 2px, transparent 2px 5px, #2d1b3d 5px 6px, transparent 6px 10px);
+      opacity: 0.25; border-radius: 2px;
     }
-
-    .ticket-value {
-      text-align: right;
-      font-weight: 600;
-    }
-
     .ticket-status {
-      text-align: center;
-      margin-top: 16px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #27ae60;
-      letter-spacing: 1px;
+      text-align: center; margin-top: 14px;
+      font-size: 1.05rem; font-weight: 900; color: #27ae60; letter-spacing: 1px;
     }
-
     .ticket-signature {
-      text-align: right;
-      margin-top: 12px;
-      font-style: italic;
-      font-weight: 600;
-      color: var(--accent-dark);
+      text-align: right; margin-top: 10px;
+      font-style: italic; font-weight: 700; color: var(--accent-dark);
+    }
+    .ticket-fine {
+      text-align: center; margin-top: 8px;
+      font-size: 0.68rem; color: #b08cc4; font-weight: 600;
     }
 
     .stamp-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
+      position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%) rotate(-15deg) scale(3);
-      font-size: 4rem;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 20;
+      font-size: 4rem; opacity: 0; pointer-events: none; z-index: 20;
       text-shadow: 2px 2px 8px rgba(0,0,0,0.15);
     }
-
-    .stamp-overlay.show {
-      animation: stampIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
+    .stamp-overlay.show { animation: stampIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     @keyframes stampIn {
-      0%   { opacity: 0; transform: translate(-50%, -50%) rotate(-15deg) scale(4); }
-      60%  { opacity: 1; transform: translate(-50%, -50%) rotate(-12deg) scale(0.9); }
-      100% { opacity: 0.85; transform: translate(-50%, -50%) rotate(-12deg) scale(1); }
+      0% { opacity: 0; transform: translate(-50%,-50%) rotate(-15deg) scale(4); }
+      60% { opacity: 1; transform: translate(-50%,-50%) rotate(-12deg) scale(0.9); }
+      100% { opacity: 0.85; transform: translate(-50%,-50%) rotate(-12deg) scale(1); }
     }
+
+    .love-note {
+      margin-top: 16px; padding: 16px;
+      background: linear-gradient(135deg, rgba(255,107,157,0.1), rgba(255,209,102,0.1));
+      border-radius: 16px; border-left: 4px solid var(--accent);
+      font-size: 0.88rem; line-height: 1.55; font-weight: 600;
+      color: #5c3d6e; display: none;
+    }
+    .love-note.show { display: block; animation: fadeIn 0.6s ease; }
 
     .final-message {
-      text-align: center;
-      margin-top: 18px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      line-height: 1.5;
-      color: var(--accent-dark);
-      opacity: 0;
-      transition: opacity 0.5s;
+      text-align: center; margin-top: 16px;
+      font-size: 0.95rem; font-weight: 800; line-height: 1.5;
+      color: var(--accent-dark); opacity: 0; transition: opacity 0.5s;
     }
-
     .final-message.show { opacity: 1; }
 
     .saved-data {
-      margin-top: 14px;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 12px;
-      font-size: 0.78rem;
-      word-break: break-word;
-      display: none;
-      line-height: 1.5;
+      margin-top: 14px; padding: 12px;
+      background: rgba(255,255,255,0.7); border-radius: 12px;
+      font-size: 0.78rem; word-break: break-word; display: none; line-height: 1.5;
     }
-
     .saved-data.show { display: block; }
 
-    /* ── Confetti ── */
-    .confetti-container {
-      position: fixed;
-      inset: 0;
+    /* ── Toast ── */
+    .toast {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%) translateY(-80px);
+      z-index: 500; max-width: 340px; width: calc(100% - 32px);
+      padding: 12px 16px; border-radius: 16px;
+      background: rgba(26,10,46,0.92); color: #fff;
+      font-size: 0.82rem; font-weight: 700; text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       pointer-events: none;
-      z-index: 200;
-      overflow: hidden;
     }
+    .toast.show { transform: translateX(-50%) translateY(0); }
 
-    .confetti-piece {
-      position: absolute;
-      top: -20px;
-      animation: confettiFall var(--fall-dur, 3s) ease-in forwards;
-    }
-
+    /* ── Confetti ── */
+    .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
+    .confetti-piece { position: absolute; top: -20px; animation: confettiFall var(--fall-dur, 3s) ease-in forwards; }
     @keyframes confettiFall {
-      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 
-    /* ── Music player ── */
+    /* ── Tap hearts ── */
+    .tap-heart {
+      position: fixed; pointer-events: none; z-index: 300;
+      font-size: 1.2rem; animation: tapHeart 0.8s ease forwards;
+    }
+    @keyframes tapHeart {
+      0% { opacity: 1; transform: translate(-50%,-50%) scale(0.5); }
+      100% { opacity: 0; transform: translate(-50%,-80px) scale(1.2); }
+    }
+
+    /* ── Music ── */
     .music-player {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 150;
-      background: rgba(26, 10, 46, 0.88);
-      backdrop-filter: blur(12px);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+      background: rgba(26,10,46,0.92); backdrop-filter: blur(14px);
+      padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
-
     .music-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
+      width: 44px; height: 44px; border-radius: 50%; border: none;
+      background: var(--accent); color: #fff; font-size: 1rem;
+      cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      transition: transform 0.3s;
     }
+    .music-btn.playing { animation: spinSlow 3s linear infinite; }
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+    .music-btn.loading { opacity: 0.6; pointer-events: none; animation: none; }
 
-    .music-btn.loading {
-      opacity: 0.6;
-      pointer-events: none;
-    }
+    .music-info { flex: 1; min-width: 0; }
+    .music-title { color: #fff; font-size: 0.82rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .music-sub { color: rgba(255,255,255,0.55); font-size: 0.72rem; margin-top: 2px; }
 
-    .music-info {
-      flex: 1;
-      min-width: 0;
+    .viz {
+      display: flex; align-items: flex-end; gap: 2px; height: 16px; margin-top: 4px;
     }
-
-    .music-title {
-      color: #fff;
-      font-size: 0.82rem;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .viz span {
+      width: 3px; background: var(--accent); border-radius: 2px;
+      height: 4px; transition: height 0.1s;
     }
-
-    .music-sub {
-      color: rgba(255, 255, 255, 0.55);
-      font-size: 0.72rem;
-      margin-top: 2px;
-    }
+    .viz.active span { animation: vizBar 0.6s ease-in-out infinite alternate; }
+    .viz.active span:nth-child(1) { animation-delay: 0s; }
+    .viz.active span:nth-child(2) { animation-delay: 0.1s; }
+    .viz.active span:nth-child(3) { animation-delay: 0.2s; }
+    .viz.active span:nth-child(4) { animation-delay: 0.15s; }
+    .viz.active span:nth-child(5) { animation-delay: 0.05s; }
+    @keyframes vizBar { from { height: 4px; } to { height: 14px; } }
 
     @media (max-width: 420px) {
-      h1 { font-size: 1.3rem; }
+      h1 { font-size: 1.28rem; }
       .card { padding: 22px 16px; }
       .btn { padding: 13px 30px; font-size: 0.95rem; }
     }
@@ -506,10 +452,18 @@
 </head>
 <body>
 
-  <!-- Background -->
+  <div class="splash" id="splash">
+    <div class="splash-emoji">🌸</div>
+    <div class="splash-text" id="splash-text">Сталкер загружает чувства...</div>
+    <div class="splash-bar"><span></span></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
   <div class="sky"></div>
-  <div class="sun"></div>
+  <div class="sun" id="sun" title=""></div>
   <div class="stars-layer" id="stars"></div>
+  <div class="hearts-layer" id="hearts"></div>
   <div class="clouds-layer">
     <div class="cloud cloud-1"></div>
     <div class="cloud cloud-2"></div>
@@ -518,17 +472,32 @@
   </div>
 
   <div class="app">
+    <div class="top-bar">
+      <span class="badge badge-stalker">🕵️ Сталкер</span>
+      <div class="steps">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+      </div>
+      <span class="badge badge-vredina">😈 Вредина</span>
+    </div>
 
     <!-- Screen 1 -->
     <div class="screen active" id="screen1">
       <div class="card">
+        <span class="mission-tag">классифицировано · только для тебя</span>
         <h1 id="s1-title">🌸 Ты приглашена на секретную миссию</h1>
         <p class="subtitle" id="s1-subtitle">После ОГЭ по математике. Восстановление нервных клеток гарантировано.</p>
+        <p class="flavor" id="s1-flavor">P.S. Кофта для тебя уже мысленно упакована 🧥</p>
         <div class="btn-row" id="btn-row">
           <button class="btn btn-yes" id="btn-yes">Да 💖</button>
           <button class="btn btn-no" id="btn-no">Нет</button>
         </div>
         <p class="persuasion" id="persuasion"></p>
+        <div class="abuse-meter" id="abuse-meter" style="display:none">
+          <div class="abuse-meter-label">Уровень абьюза Сталкера</div>
+          <div class="abuse-bar"><div class="abuse-fill" id="abuse-fill"></div></div>
+        </div>
       </div>
     </div>
 
@@ -537,23 +506,28 @@
       <div class="card">
         <h1 id="s2-title">📋 Почти готово!</h1>
         <p class="subtitle" id="s2-subtitle">Уточни пару деталей, Вредина:</p>
+        <p class="flavor" id="s2-flavor">Ты же сильная и независимая — справишься с формой 💪</p>
+
+        <div class="live-preview" id="live-preview">
+          <strong>Превью:</strong> <span id="preview-text">Вредина + Сталкер = прогулка мечты</span>
+        </div>
 
         <form id="survey-form">
           <div class="form-group">
             <label for="name">Имя</label>
+            <p class="field-hint">Официально или по прозвищу — оба засчитываются</p>
             <input type="text" id="name" value="Вредина">
           </div>
-
           <div class="form-group">
             <label for="date">Дата</label>
+            <p class="field-hint">ОГЭ позади — теперь только закаты и проценты счастья 📈</p>
             <input type="date" id="date" value="2025-06-02">
           </div>
-
           <div class="form-group">
             <label for="time">Время</label>
+            <p class="field-hint">Не сосулька — приходи вовремя (или я подожду ❄️)</p>
             <input type="time" id="time" step="1" value="15:30:00">
           </div>
-
           <div class="form-group">
             <label>Формат встречи</label>
             <div class="radio-group">
@@ -565,7 +539,6 @@
               </label>
             </div>
           </div>
-
           <div class="form-group">
             <label>Маршрут</label>
             <div class="radio-group">
@@ -576,16 +549,15 @@
               </label>
             </div>
           </div>
-
           <div class="form-group">
             <label for="sweater">Кофта</label>
+            <p class="field-hint" id="sweater-hint">Кофта для тебя — моя любимая миссия 🧥</p>
             <select id="sweater">
               <option value="carry">Возьму, чтобы ты нёс 💕</option>
               <option value="self">Надену сама, я сильная 💪</option>
               <option value="none">Не возьму, закаляюсь ❄️</option>
             </select>
           </div>
-
           <button type="submit" class="btn btn-submit">Отправить предложение 💌</button>
         </form>
       </div>
@@ -596,84 +568,171 @@
       <div class="card">
         <div class="ticket" id="ticket">
           <div class="ticket-header">✦ Билет на прогулку ✦</div>
+          <div class="ticket-id" id="ticket-id">№ VRD-2025-❤️</div>
           <div class="ticket-row"><span class="ticket-label">Пассажир</span><span class="ticket-value" id="t-name">—</span></div>
           <div class="ticket-row"><span class="ticket-label">Дата</span><span class="ticket-value" id="t-date">—</span></div>
           <div class="ticket-row"><span class="ticket-label">Время</span><span class="ticket-value" id="t-time">—</span></div>
           <div class="ticket-row"><span class="ticket-label">Формат</span><span class="ticket-value" id="t-format">—</span></div>
           <div class="ticket-row"><span class="ticket-label">Маршрут</span><span class="ticket-value" id="t-route">—</span></div>
           <div class="ticket-row"><span class="ticket-label">Кофта</span><span class="ticket-value" id="t-sweater">—</span></div>
+          <div class="ticket-barcode"></div>
           <div class="ticket-status">ПОДТВЕРЖДЕНО ✅</div>
+          <div class="ticket-fine">* штраф за опоздание: один комплимент Сталкеру</div>
           <div class="ticket-signature">Твой Сталкер</div>
           <div class="stamp-overlay" id="stamp">✅</div>
         </div>
-
         <button class="btn btn-stamp" id="btn-stamp">Поставить штамп 🔥</button>
         <p class="final-message" id="final-msg"></p>
+        <div class="love-note" id="love-note"></div>
         <div class="saved-data" id="saved-data"></div>
       </div>
     </div>
-
   </div>
 
-  <!-- Confetti -->
   <div class="confetti-container" id="confetti"></div>
 
-  <!-- Music player -->
   <div class="music-player">
     <button class="music-btn" id="music-toggle" aria-label="Play/Pause">▶</button>
     <div class="music-info">
       <div class="music-title">Nirvana — Rape Me</div>
-      <div class="music-sub">для твоего комфорта и + мне карму 🎸</div>
+      <div class="music-sub" id="music-sub">для твоего комфорта и + мне карму 🎸</div>
+      <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span></div>
     </div>
   </div>
   <audio id="audio" src="rape-me.mp3" loop preload="auto" playsinline></audio>
 
   <script>
-    /* ── Stars ── */
+    /* ── Splash ── */
+    const splashTexts = [
+      'Сталкер загружает чувства...',
+      'Упаковываю кофту для тебя...',
+      'Считаю проценты счастья...',
+      'Размораживаю сосульку...'
+    ];
+    document.getElementById('splash-text').textContent = splashTexts[Math.floor(Math.random() * splashTexts.length)];
+    setTimeout(() => document.getElementById('splash').classList.add('hide'), 1600);
+
+    /* ── Toast ── */
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    const randomToasts = [
+      '💕 Сталкер следит... но с любовью',
+      '🧥 Кофта для тебя — уже в планах',
+      '📈 Проценты: 100% шанс на классный вечер',
+      '❄️ Будь не сосулькой — нажми что-нибудь',
+      '😈 Абьюзер? Нет, просто очень хочу увидеться'
+    ];
+    setInterval(() => {
+      if (Math.random() > 0.92) toast(randomToasts[Math.floor(Math.random() * randomToasts.length)]);
+    }, 12000);
+
+    /* ── Stars & hearts ── */
     (function createStars() {
       const layer = document.getElementById('stars');
       for (let i = 0; i < 50; i++) {
         const s = document.createElement('div');
         s.className = 'star';
         const size = Math.random() * 2.5 + 1;
-        s.style.cssText = `
-          width:${size}px; height:${size}px;
-          top:${Math.random() * 45}%;
-          left:${Math.random() * 100}%;
-          --dur:${(Math.random() * 3 + 2).toFixed(1)}s;
-          animation-delay:${(Math.random() * 4).toFixed(1)}s;
-        `;
+        s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*45}%;left:${Math.random()*100}%;--dur:${(Math.random()*3+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
         layer.appendChild(s);
       }
     })();
 
-    /* ── Screen navigation ── */
+    (function createFloatHearts() {
+      const layer = document.getElementById('hearts');
+      const emojis = ['💕','💖','🌸','✨','🧥'];
+      for (let i = 0; i < 12; i++) {
+        const h = document.createElement('div');
+        h.className = 'float-heart';
+        h.textContent = emojis[i % emojis.length];
+        h.style.cssText = `left:${Math.random()*100}%;--hs:${(Math.random()*10+10).toFixed(0)}px;--fd:${(Math.random()*6+7).toFixed(1)}s;animation-delay:${(Math.random()*8).toFixed(1)}s`;
+        layer.appendChild(h);
+      }
+    })();
+
+    /* ── Tap hearts ── */
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-no.escaping')) return;
+      const h = document.createElement('div');
+      h.className = 'tap-heart';
+      h.textContent = ['💕','💖','✨','🌸'][Math.floor(Math.random()*4)];
+      h.style.left = e.clientX + 'px';
+      h.style.top = e.clientY + 'px';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 800);
+    });
+
+    /* ── Sun easter egg ── */
+    let sunTaps = 0;
+    document.getElementById('sun').addEventListener('click', () => {
+      sunTaps++;
+      if (sunTaps === 5) toast('☀️ Солнце одобряет эту прогулку!');
+      if (sunTaps === 10) toast('🔥 Сталкер сгорел от счастья. Перезагрузи страницу 😂');
+    });
+
+    /* ── Steps ── */
+    function setStep(n) {
+      document.querySelectorAll('.step-dot').forEach(d => {
+        d.classList.toggle('active', +d.dataset.step === n);
+      });
+    }
+
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
+      setStep(id === 'screen1' ? 1 : id === 'screen2' ? 2 : 3);
       window.scrollTo(0, 0);
     }
 
-    /* ── Screen 1 logic ── */
+    /* ── Screen 1 ── */
     const btnYes = document.getElementById('btn-yes');
     const btnNo = document.getElementById('btn-no');
     const persuasion = document.getElementById('persuasion');
-    let noClicks = 0;
-    let yesScale = 1;
+    const abuseMeter = document.getElementById('abuse-meter');
+    const abuseFill = document.getElementById('abuse-fill');
+    let noClicks = 0, yesScale = 1;
 
     const persuasionTexts = [
       'Ты правда не хочешь? 🥺',
       'Но это прям абьюз... 💔',
       'Может, тогда на другое время? ⏰'
     ];
+    const noLabels = ['Нет', 'Точно нет?', 'Я сильная и независимая!', 'Ладно, абьюзер...'];
+
+    const s1Flavors = [
+      'P.S. Кофта для тебя уже мысленно упакована 🧥',
+      'P.S. Проценты счастья на этой прогулке — без комиссии 📈',
+      'P.S. Сосулька не пройдёт — только ты ❄️💕'
+    ];
+    let flavorIdx = 0;
+    setInterval(() => {
+      flavorIdx = (flavorIdx + 1) % s1Flavors.length;
+      const el = document.getElementById('s1-flavor');
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.textContent = s1Flavors[flavorIdx];
+      el.style.animation = '';
+    }, 5000);
 
     function goToScreen2(abused) {
       if (abused) {
         document.getElementById('s2-title').textContent = '😈 Ладно, абьюзер...';
         document.getElementById('s2-subtitle').textContent = 'Раз ты трижды сказала «нет», вот особые условия:';
+        document.getElementById('s2-flavor').textContent = 'Особые условия = особая прогулка. Справедливо? 😏';
+        toast('😈 Абьюзер mode: activated');
       } else {
         document.getElementById('s2-title').textContent = '📋 Почти готово!';
         document.getElementById('s2-subtitle').textContent = 'Уточни пару деталей, Вредина:';
+        document.getElementById('s2-flavor').textContent = 'Ты же сильная и независимая — справишься с формой 💪';
+        toast('💖 Отличный выбор, Вредина!');
+        launchMiniHearts();
       }
       showScreen('screen2');
     }
@@ -681,60 +740,83 @@
     btnYes.addEventListener('click', () => goToScreen2(false));
 
     function moveNoButton() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const bw = btnNo.offsetWidth;
-      const bh = btnNo.offsetHeight;
-      const maxX = vw - bw - 16;
-      const maxY = vh - bh - 110;
-      const x = Math.max(8, Math.random() * maxX);
-      const y = Math.max(8, Math.random() * maxY);
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const bw = btnNo.offsetWidth, bh = btnNo.offsetHeight;
       btnNo.classList.add('escaping');
-      btnNo.style.left = x + 'px';
-      btnNo.style.top = y + 'px';
+      btnNo.style.left = Math.max(8, Math.random() * (vw - bw - 16)) + 'px';
+      btnNo.style.top = Math.max(8, Math.random() * (vh - bh - 110)) + 'px';
     }
 
     btnNo.addEventListener('click', () => {
       noClicks++;
       yesScale *= 1.25;
       btnYes.style.transform = `scale(${yesScale})`;
+      abuseMeter.style.display = 'block';
+      abuseFill.style.width = Math.min(100, noClicks * 33) + '%';
 
       if (noClicks <= 3) {
         persuasion.textContent = persuasionTexts[noClicks - 1];
+        persuasion.classList.remove('pop');
+        persuasion.offsetHeight;
+        persuasion.classList.add('pop');
+        btnNo.textContent = noLabels[noClicks] || 'Нет';
         moveNoButton();
       }
 
       if (noClicks >= 3) {
-        setTimeout(() => goToScreen2(true), 400);
+        btnNo.textContent = noLabels[3];
+        setTimeout(() => goToScreen2(true), 500);
       }
     });
 
-    /* ── Form: show/hide custom inputs ── */
+    /* ── Form ── */
     document.querySelectorAll('input[name="format"]').forEach(r => {
       r.addEventListener('change', () => {
         document.getElementById('format-custom').classList.toggle('hidden', r.value !== 'custom' || !r.checked);
+        updatePreview();
       });
     });
-
     document.querySelectorAll('input[name="route"]').forEach(r => {
       r.addEventListener('change', () => {
         document.getElementById('route-custom').classList.toggle('hidden', r.value !== 'custom' || !r.checked);
+        updatePreview();
       });
     });
 
-    /* ── Labels ── */
-    const formatLabels = {
-      stalker: 'Сталкер придумает (абьюз)',
-      home: 'У дома Вредины',
-      custom: ''
+    const sweaterHints = {
+      carry: 'Кофта для тебя — моя любимая миссия 🧥💕',
+      self: 'Сильная и независимая — уважаю! Но кофту всё равно возьму про запас 💪',
+      none: 'Сосулька detected ❄️ Я принесу кофту. Ты не уйдёшь от абьюза 🧥'
     };
+    document.getElementById('sweater').addEventListener('change', (e) => {
+      document.getElementById('sweater-hint').textContent = sweaterHints[e.target.value];
+      updatePreview();
+    });
 
+    let nameClicks = 0;
+    document.getElementById('name').addEventListener('click', () => {
+      nameClicks++;
+      if (nameClicks === 3) toast('😈 Да, ты Вредина. И это комплимент.');
+    });
+
+    function updatePreview() {
+      const name = document.getElementById('name').value || 'Вредина';
+      const sweater = document.getElementById('sweater').value;
+      const parts = [`${name} + Сталкер`];
+      if (sweater === 'carry') parts.push('кофта на плечах Сталкера');
+      else if (sweater === 'self') parts.push('сильная и независимая');
+      else parts.push('закаляется как сосулька');
+      document.getElementById('preview-text').textContent = parts.join(' · ') + ' = 💕';
+    }
+    ['name','date','time'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
+    updatePreview();
+
+    const formatLabels = { stalker: 'Сталкер придумает (абьюз)', home: 'У дома Вредины', custom: '' };
     const sweaterLabels = {
       carry: 'Возьму, чтобы ты нёс 💕',
       self: 'Надену сама, я сильная 💪',
       none: 'Не возьму, закаляюсь ❄️'
     };
-
     let formData = {};
 
     function formatDateRu(iso) {
@@ -747,34 +829,21 @@
       const formatVal = document.querySelector('input[name="format"]:checked').value;
       const routeVal = document.querySelector('input[name="route"]:checked').value;
       const sweaterVal = document.getElementById('sweater').value;
-
       let formatText = formatLabels[formatVal];
       if (formatVal === 'custom') formatText = document.getElementById('format-custom').value || 'Свой вариант';
-
       let routeText = routeVal === 'stalker' ? 'Куда захочешь, Сталкер' : (document.getElementById('route-custom').value || 'Напишу сама');
-
       return {
         name: document.getElementById('name').value || 'Вредина',
         date: document.getElementById('date').value,
         time: document.getElementById('time').value,
-        format: formatText,
-        formatKey: formatVal,
-        route: routeText,
-        routeKey: routeVal,
-        sweater: sweaterLabels[sweaterVal],
-        sweaterKey: sweaterVal
+        format: formatText, formatKey: formatVal,
+        route: routeText, routeKey: routeVal,
+        sweater: sweaterLabels[sweaterVal], sweaterKey: sweaterVal
       };
     }
 
     function dataToText(d) {
-      return [
-        `👤 ${d.name}`,
-        `📅 ${formatDateRu(d.date)}`,
-        `⏰ ${d.time}`,
-        `🎭 ${d.format}`,
-        `🗺 ${d.route}`,
-        `🧥 ${d.sweater}`
-      ].join('\n');
+      return [`👤 ${d.name}`,`📅 ${formatDateRu(d.date)}`,`⏰ ${d.time}`,`🎭 ${d.format}`,`🗺 ${d.route}`,`🧥 ${d.sweater}`].join('\n');
     }
 
     /* ── Telegram ── */
@@ -783,21 +852,15 @@
 
     async function sendToTelegram(data) {
       const text = '🌸 Новое приглашение от Вредины!\n\n' + dataToText(data);
-      const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
-
       try {
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ chat_id: TG_CHAT, text })
         });
-        if (!res.ok) throw new Error('API error ' + res.status);
+        if (!res.ok) throw new Error('API error');
         return { ok: true };
       } catch (e) {
-        if (e.message.includes('Failed to fetch') || e.name === 'TypeError') {
-          return { ok: false, vpn: true };
-        }
-        return { ok: false, vpn: false };
+        return { ok: false, vpn: e.name === 'TypeError' || e.message.includes('Failed') };
       }
     }
 
@@ -807,39 +870,37 @@
       el.classList.add('show');
     }
 
-    /* ── Form submit ── */
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       formData = collectFormData();
-
       document.getElementById('t-name').textContent = formData.name;
       document.getElementById('t-date').textContent = formatDateRu(formData.date);
       document.getElementById('t-time').textContent = formData.time;
       document.getElementById('t-format').textContent = formData.format;
       document.getElementById('t-route').textContent = formData.route;
       document.getElementById('t-sweater').textContent = formData.sweater;
-
+      document.getElementById('ticket-id').textContent = `№ VRD-${formData.date.replace(/-/g,'')}-❤️`;
       showScreen('screen3');
+      toast('💌 Билет сформирован! Осталось поставить штамп');
+      launchMiniHearts();
 
       const result = await sendToTelegram(formData);
       if (result.ok) return;
-
-      if (result.vpn) {
-        alert('Нужен VPN, но данные сохранены');
-        showSavedData(formData, true);
-      } else {
-        alert('Не удалось отправить:\n\n' + dataToText(formData));
-        showSavedData(formData, false);
-      }
+      if (result.vpn) { alert('Нужен VPN, но данные сохранены'); showSavedData(formData, true); }
+      else { alert('Не удалось отправить:\n\n' + dataToText(formData)); showSavedData(formData, false); }
     });
 
-    /* ── Stamp & confetti ── */
+    /* ── Stamp ── */
     let stamped = false;
+    const loveNotes = [
+      'Ты — моя любимая Вредина. Спасибо, что сказала «да» (или трижды «нет» — тоже считается). Жду нашу прогулку больше, чем результатов ОГЭ. 💕',
+      'Кофта для тебя. Карты для нас. Закат для двоих. Всё остальное — приложится. 🌸',
+      'P.S. Проценты на счастье начисляются с первой минуты прогулки. Без скрытых комиссий. Только ты и я. 📈💕'
+    ];
 
     document.getElementById('btn-stamp').addEventListener('click', () => {
       if (stamped) return;
       stamped = true;
-
       document.getElementById('stamp').classList.add('show');
       document.getElementById('btn-stamp').disabled = true;
       document.getElementById('btn-stamp').style.opacity = '0.5';
@@ -852,55 +913,74 @@
       }
       msg.classList.add('show');
 
+      const note = document.getElementById('love-note');
+      note.textContent = loveNotes[Math.floor(Math.random() * loveNotes.length)];
+      note.classList.add('show');
+
       launchConfetti();
+      toast('🔥 Штамп поставлен! Миссия выполнена');
     });
+
+    function launchMiniHearts() {
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+          const h = document.createElement('div');
+          h.className = 'tap-heart';
+          h.textContent = '💕';
+          h.style.left = (30 + Math.random() * 40) + 'vw';
+          h.style.top = (40 + Math.random() * 20) + 'vh';
+          document.body.appendChild(h);
+          setTimeout(() => h.remove(), 800);
+        }, i * 80);
+      }
+    }
 
     function launchConfetti() {
       const container = document.getElementById('confetti');
-      const shapes = ['❤️', '⭐', '💕', '✨'];
-      const colors = ['#ff6b9d', '#ffd166', '#6c5ce7', '#ff9a56', '#27ae60'];
+      const shapes = ['❤️','⭐','💕','✨','🧥','🌸','😈'];
+      const words = ['абьюз','кофта','сосулька','💪','VRD'];
+      const colors = ['#ff6b9d','#ffd166','#6c5ce7','#ff9a56','#27ae60'];
 
       for (let i = 0; i < 50; i++) {
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
-
-        if (Math.random() > 0.4) {
+        const r = Math.random();
+        if (r > 0.55) {
           piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
           piece.style.fontSize = (Math.random() * 12 + 10) + 'px';
+        } else if (r > 0.35) {
+          piece.textContent = words[Math.floor(Math.random() * words.length)];
+          piece.style.fontSize = '11px';
+          piece.style.fontWeight = '800';
+          piece.style.color = colors[Math.floor(Math.random() * colors.length)];
         } else {
           const size = Math.random() * 8 + 6;
-          piece.style.width = size + 'px';
-          piece.style.height = size + 'px';
-          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-          piece.style.borderRadius = '2px';
+          piece.style.cssText += `width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:2px`;
         }
-
         piece.style.left = Math.random() * 100 + '%';
         piece.style.setProperty('--fall-dur', (Math.random() * 2 + 2.5).toFixed(1) + 's');
         piece.style.animationDelay = (Math.random() * 1.5).toFixed(1) + 's';
         container.appendChild(piece);
-
         setTimeout(() => piece.remove(), 5000);
       }
     }
 
-    /* ── Music player ── */
+    /* ── Music ── */
     const audio = document.getElementById('audio');
     const musicToggle = document.getElementById('music-toggle');
-    const musicSub = document.querySelector('.music-sub');
+    const musicSub = document.getElementById('music-sub');
+    const viz = document.getElementById('viz');
     audio.volume = 0.4;
 
     function syncMusicButton() {
       musicToggle.textContent = audio.paused ? '▶' : '⏸';
+      musicToggle.classList.toggle('playing', !audio.paused);
       musicToggle.classList.remove('loading');
+      viz.classList.toggle('active', !audio.paused);
     }
 
     audio.addEventListener('play', syncMusicButton);
     audio.addEventListener('pause', syncMusicButton);
-    audio.addEventListener('canplaythrough', () => {
-      if (musicSub.dataset.ready) return;
-      musicSub.dataset.ready = '1';
-    });
     audio.addEventListener('error', () => {
       musicSub.textContent = 'Трек не загрузился — обнови страницу 🎸';
       syncMusicButton();
@@ -909,17 +989,13 @@
     musicToggle.addEventListener('click', async (e) => {
       e.stopPropagation();
       if (musicToggle.classList.contains('loading')) return;
-
-      if (!audio.paused) {
-        audio.pause();
-        return;
-      }
-
+      if (!audio.paused) { audio.pause(); return; }
       musicToggle.classList.add('loading');
       try {
         if (audio.readyState < 2) audio.load();
         await audio.play();
-      } catch (err) {
+        toast('🎸 Nirvana для твоего комфорта');
+      } catch {
         musicSub.textContent = 'Нажми ещё раз — браузер требует жест 👆';
         syncMusicButton();
       }
