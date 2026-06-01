@@ -216,9 +216,11 @@
       transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.2s;
     }
     .btn-no.escaping {
-      position: fixed; z-index: 100; font-size: 0.85rem;
-      margin: 0; white-space: nowrap;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      position: fixed; z-index: 200; font-size: 0.85rem;
+      margin: 0; white-space: nowrap; min-width: 72px;
+      background: #fff; color: #555;
+      border: 2px solid var(--accent);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
     }
 
     .btn-submit {
@@ -801,35 +803,46 @@
 
     btnYes.addEventListener('click', () => goToScreen2(false));
 
+    function clamp(val, min, max) {
+      return Math.min(max, Math.max(min, val));
+    }
+
     function moveNoButton() {
-      const rect = btnNo.getBoundingClientRect();
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const pad = 12;
-      const bottomPad = 118;
+      const pad = 10;
+      const bottomPad = 125;
+      const rect = btnNo.getBoundingClientRect();
 
       if (!btnNo.classList.contains('escaping')) {
         btnNo.classList.add('escaping');
+        document.body.appendChild(btnNo);
         btnNo.style.left = rect.left + 'px';
         btnNo.style.top = rect.top + 'px';
       }
 
-      const bw = btnNo.offsetWidth || rect.width;
-      const bh = btnNo.offsetHeight || rect.height;
+      const bw = btnNo.offsetWidth || 80;
+      const bh = btnNo.offsetHeight || 44;
       const minX = pad;
       const maxX = Math.max(minX, vw - bw - pad);
       const minY = pad;
       const maxY = Math.max(minY, vh - bh - bottomPad);
 
-      const jump = noClicks === 1 ? 90 : noClicks === 2 ? 140 : 200;
-      let x = rect.left + (Math.random() - 0.5) * jump * 2;
-      let y = rect.top + (Math.random() - 0.5) * jump * 2;
+      const curX = parseFloat(btnNo.style.left) || rect.left;
+      const curY = parseFloat(btnNo.style.top) || rect.top;
+      const jump = noClicks === 1 ? 70 : noClicks === 2 ? 110 : 150;
 
-      x = Math.min(maxX, Math.max(minX, x));
-      y = Math.min(maxY, Math.max(minY, y));
+      let x = curX + (Math.random() - 0.5) * jump * 2;
+      let y = curY + (Math.random() - 0.5) * jump * 2;
 
-      btnNo.style.left = x + 'px';
-      btnNo.style.top = y + 'px';
+      if (noClicks === 1) {
+        const yesR = btnYes.getBoundingClientRect();
+        x = clamp(curX + (Math.random() > 0.5 ? 1 : -1) * (40 + Math.random() * 50), minX, maxX);
+        y = clamp(yesR.top + yesR.height + 12 + Math.random() * 40, minY, maxY);
+      }
+
+      btnNo.style.left = clamp(x, minX, maxX) + 'px';
+      btnNo.style.top = clamp(y, minY, maxY) + 'px';
     }
 
     btnNo.addEventListener('click', () => {
